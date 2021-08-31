@@ -264,7 +264,7 @@ w1 = Weights([1, 2, 2, 3, 4, 5, 5, 5, 7, 7])
 s1 = span([1, 2, 2, 3, 4, 5, 5, 5, 7, 7])
 
 # ╔═╡ bc881a15-2d5d-4ff6-9355-7bda9b39e59a
-isequal(proportions([1, 2, 2, 3, 4, 5, 5, 5, 7, 7], s1), counts([1, 2, 2, 3, 4, 5, 5, 5, 7, 7], s1)/length([1, 2, 2, 3, 4, 5, 5, 5, 7, 7]))# computes proportions of each number from 1 to 7 in the matrix. Here sum of weights is used instead of raw counts of weight vectors
+isequal(proportions([1, 2, 2, 3, 4, 5, 5, 5, 7, 7], s1), counts([1, 2, 2, 3, 4, 5, 5, 5, 7, 7], s1).* inv(length([1, 2, 2, 3, 4, 5, 5, 5, 7, 7])))# computes proportions of each number from 1 to 7 in the matrix. Here sum of weights is used instead of raw counts of weight vectors
 
 # ╔═╡ 775b56d5-77f9-4b1d-9a33-7b100087caeb
 countmap([1, 2, 2, 3, 4, 5, 5, 5, 7, 7]) # returns a mapping of each number to its corresponding occurences
@@ -362,10 +362,10 @@ X = [1 2 5
      4 0 4]
 
 # ╔═╡ 884d37ea-372e-4b26-9202-73c5cb5d8978
-genvar(X) ≈ det(X) # since the matrix isn't a vector, genvar outputs determinant of the matrix rather than variance of the matrix
+genvar(X) ≈ det(cov(X)) # since the matrix isn't a vector, genvar outputs determinant of the matrix rather than variance of the matrix
 
 # ╔═╡ a0a1df9e-1f4f-4cb7-aebd-36a34e984bcc
-totalvar(X) ≈ sum(Diagonal(X)) # since the matrix isn't a vector, totalvar outputs sum of diagonal elements of the matrix
+totalvar(X) ≈ sum(Diagonal(cov(X))) # since the matrix isn't a vector, totalvar outputs sum of diagonal elements of the matrix
 
 # ╔═╡ e66814d4-9b3a-4e8a-9050-c894b453f8f3
 # Miscellaneous functions
@@ -408,12 +408,6 @@ b = [true, false, false, true, false, true, true, false]
 
 # ╔═╡ 3a7b82ed-7979-4b12-8402-d3d9de6d36ab
 levelsmap(s) == Dict(2=>2, 3=>3, 1=>1)
-
-# ╔═╡ 4dd6624b-38ff-41bb-82fe-228dfb09f532
-# Abstraction for Statistical Models
-
-# ╔═╡ 9c85c8aa-0b70-46c8-a6ca-516229a88810
-
 
 # ╔═╡ 540452cf-61de-4703-a403-66fa67cfb650
 # Data Transformations
@@ -1787,8 +1781,6 @@ version = "3.5.0+0"
 # ╠═841bacca-3ce8-47ae-b38a-2671e551856b
 # ╠═9b446478-166d-4362-89a8-ebeee2fa6660
 # ╠═3a7b82ed-7979-4b12-8402-d3d9de6d36ab
-# ╠═4dd6624b-38ff-41bb-82fe-228dfb09f532
-# ╠═9c85c8aa-0b70-46c8-a6ca-516229a88810
 # ╠═540452cf-61de-4703-a403-66fa67cfb650
 # ╠═26d13f87-cbad-4314-9ee0-7f50423e9790
 # ╠═9019e93b-51e0-4b15-86d3-2fa23510811c
