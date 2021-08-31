@@ -10,6 +10,9 @@ using StatsModels
 # ╔═╡ 5ecccbc3-37db-4326-b363-c15d2c1c55fb
 using Random
 
+# ╔═╡ 45ae7bfb-c4cf-425c-9541-a4410f6bbf02
+using Tables
+
 # ╔═╡ a68d1c2d-cedd-4fd7-923b-69bf70c91b50
 using DataFrames
 
@@ -26,13 +29,19 @@ Random.seed!(1234)
 rng = StableRNG(1)
 
 # ╔═╡ 57233fca-dd70-4113-88e7-3699f2987a10
-f1 = @formula(y ~ 5 + a - b * c / b|c) # can only allow ints
+f1 = @formula(y ~ 1 + a + b + c + b&c) # can only allow ints as intercept and also can be of any form such as @formula(y ~ 5 + a - b * c / b|c)
 
 # ╔═╡ 59a1d516-1349-40cf-a63b-ba397c51429c
-df = DataFrame(y = rand(rng, 8), a = 1:8, b = rand(rng, 8), c = repeat(["d","e"], 4))
+df = DataFrame(y = rand(rng, 9), a = 1:9, b = rand(rng, 9), c = repeat(["d","e","f"], 3))
 
 # ╔═╡ a0faf1c1-bbb6-4ddb-ae52-9e618b0541e3
 f = apply_schema(f1, schema(f1, df))
+
+# ╔═╡ c774b110-cac9-433b-aca8-6e2ae4de7509
+resp, pred = modelcols(f, df)
+
+# ╔═╡ 7b823b2d-8152-432b-bed0-8e956b370750
+pred
 
 # ╔═╡ de56af73-fb18-4a65-b0bd-10eae75d2861
 coefnames(f)
@@ -65,10 +74,13 @@ data = DataFrame(a = rand(rng, 100), b = repeat(["w", "x", "y", "z"], 25))
 X = StatsModels.modelmatrix(@formula(y ~ 1 + a*b).rhs, data)
 
 # ╔═╡ 219f7dcc-880e-4dd3-b565-515f7ab76570
-data.y = X*(1:8) .+ randn(rng, 100)*0.1
+data.y = X*(1:8) .+ randn(rng, 100)*0.1 # be careful with the operator sequence
 
 # ╔═╡ a6488e6d-03c5-4353-8a31-d2c1bd461353
 mod = fit(LinearModel, @formula(y ~ 1 + a*b), data)
+
+# ╔═╡ 0c37727f-614d-47dc-b820-68adef96e97a
+#  Julia's @formula is meant to be extendable as feasible through Julian's usual techniques of multiple dispatch. 
 
 # ╔═╡ e9096f5b-147e-4727-89e2-6ec58d6abcd5
 # Modelling categorical data
@@ -149,7 +161,7 @@ StatsModels.ContrastsMatrix(DummyCoding(), ["a", "c", "d", "f"]).matrix
 
 # ╔═╡ 3ef9ab8d-b3dd-4de7-a9c5-f1f3affeca13
 #=
-Model matrix columns centered on the mean are generated when all levels are equally common (have mean 0).
+Model matrix columns centered on the mean are generated when all levels are equally common.
 The resulting columns are not orthogonal when there are more than two levels.The intercept is the grand mean of the regression model with an effects-coded argument.
 
 Similar to DummyCoding, but with a base level of -1 instead of 0. 
@@ -158,20 +170,29 @@ StatsModels.ContrastsMatrix(EffectsCoding(), ["a", "c", "d", "f"]).matrix
 
 # ╔═╡ ba812640-89f4-4c4c-b978-77f6d082e608
 #=
-According to Helmert coding, when all levels are equally common, orthogonal columns are generated that are mean-centered (mean = 0). 
+According to Helmert coding, when all levels are equally common, orthogonal columns are generated that are mean-centered. 
 
 In Helmert coding, each level is coded as the difference from the average of the levels below it.
 =#
 StatsModels.ContrastsMatrix(HelmertCoding(), ["a", "c", "d", "f"]).matrix
 
-# ╔═╡ 703ed77e-9107-47a6-af9f-c99251ed8a77
+# ╔═╡ b444f628-95ee-46dd-938a-aaeddbae964c
+#=
+In order to test "sequential difference" hypotheses, code each level such that it can be compared to the one below.
+nth predictor examines a null hypothesis that the difference between levels n and n+1 is zero in this case. 
 
+=#
+seqdiff = StatsModels.ContrastsMatrix(SeqDiffCoding(), ["a", "c", "d", "f"]).matrix
+
+# ╔═╡ 655f9232-c85e-4094-b757-9be7901b4c61
+StatsModels.hypothesis_matrix(seqdiff) # this shows a better picture of the corresponding hypothesis matrix
 
 # ╔═╡ 246223cb-df6e-4dcc-b590-f6ec5e08636b
+#=
+In Full Dummy coding, each level including the base level, has one indication (1 or 0) column. This is exactly One-hot encoding. This is not exported.
+=#
 
-
-# ╔═╡ 0142ded1-959f-4a81-8827-117d8a64acaa
-
+StatsModels.ContrastsMatrix(StatsModels.FullDummyCoding(), ["a", "b", "c"]).matrix
 
 # ╔═╡ d4d4e674-4591-41f3-b544-4c6c4bf87fbd
 # Temporal Terms
@@ -196,12 +217,14 @@ GLM = "38e38edf-8417-5370-95a0-9cbb8c7f171a"
 Random = "9a3f8284-a2c9-5f02-9a11-845980a1fd5c"
 StableRNGs = "860ef19b-820b-49d6-a774-d7a799459cd3"
 StatsModels = "3eaba693-59b7-5ba5-a881-562e759f1c8d"
+Tables = "bd369af6-aec1-5ad0-b16a-f7cc5008161c"
 
 [compat]
 DataFrames = "~1.2.2"
 GLM = "~1.5.1"
 StableRNGs = "~1.0.0"
 StatsModels = "~0.6.24"
+Tables = "~1.5.0"
 """
 
 # ╔═╡ 00000000-0000-0000-0000-000000000002
@@ -583,6 +606,7 @@ uuid = "3f19e933-33d8-53b3-aaab-bd5110c3b7a0"
 # ╔═╡ Cell order:
 # ╠═6a8d7cf4-08d2-11ec-2bfe-77d314082c71
 # ╠═5ecccbc3-37db-4326-b363-c15d2c1c55fb
+# ╠═45ae7bfb-c4cf-425c-9541-a4410f6bbf02
 # ╠═a68d1c2d-cedd-4fd7-923b-69bf70c91b50
 # ╠═ea2b9175-ebd3-4f33-b2c4-d947651281c7
 # ╠═3b93d4d1-9d32-4e6e-a517-87ad8815f071
@@ -591,6 +615,8 @@ uuid = "3f19e933-33d8-53b3-aaab-bd5110c3b7a0"
 # ╠═57233fca-dd70-4113-88e7-3699f2987a10
 # ╠═59a1d516-1349-40cf-a63b-ba397c51429c
 # ╠═a0faf1c1-bbb6-4ddb-ae52-9e618b0541e3
+# ╠═c774b110-cac9-433b-aca8-6e2ae4de7509
+# ╠═7b823b2d-8152-432b-bed0-8e956b370750
 # ╠═de56af73-fb18-4a65-b0bd-10eae75d2861
 # ╠═d4c50010-b5ff-4e2a-8f7e-7e3638a08d7c
 # ╠═9de377d7-65bb-4acc-a381-e3ac5641bcc1
@@ -603,6 +629,7 @@ uuid = "3f19e933-33d8-53b3-aaab-bd5110c3b7a0"
 # ╠═4c78b70c-e582-416d-9601-6d30d82d7819
 # ╠═219f7dcc-880e-4dd3-b565-515f7ab76570
 # ╠═a6488e6d-03c5-4353-8a31-d2c1bd461353
+# ╠═0c37727f-614d-47dc-b820-68adef96e97a
 # ╠═e9096f5b-147e-4727-89e2-6ec58d6abcd5
 # ╠═40a59d50-4507-4e84-a1d1-9df3feeb9d71
 # ╠═1fdedb94-6afa-4b1a-836c-c7fbdbf1b762
@@ -617,9 +644,9 @@ uuid = "3f19e933-33d8-53b3-aaab-bd5110c3b7a0"
 # ╠═30fcd878-7e21-458f-af39-40249dea9dd7
 # ╠═3ef9ab8d-b3dd-4de7-a9c5-f1f3affeca13
 # ╠═ba812640-89f4-4c4c-b978-77f6d082e608
-# ╠═703ed77e-9107-47a6-af9f-c99251ed8a77
+# ╠═b444f628-95ee-46dd-938a-aaeddbae964c
+# ╠═655f9232-c85e-4094-b757-9be7901b4c61
 # ╠═246223cb-df6e-4dcc-b590-f6ec5e08636b
-# ╠═0142ded1-959f-4a81-8827-117d8a64acaa
 # ╠═d4d4e674-4591-41f3-b544-4c6c4bf87fbd
 # ╠═b4c15ce5-4f87-4f0a-af83-b45cd7ac9a89
 # ╠═d419deee-45b4-4910-a6a7-32b9670d41e4
