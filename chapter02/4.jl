@@ -5,10 +5,10 @@ using Markdown
 using InteractiveUtils
 
 # ╔═╡ c9994475-bef9-4557-b774-e20bd99c049d
-using DataFrames, Statistics
+using DataFrames, Statistics, CategoricalArrays, DataFramesMeta
 
 # ╔═╡ aac765bf-9ccd-4442-beea-38a765c59d0a
-using CSV
+using CSV, SQLite, Query, Tables
 
 # ╔═╡ c8633fe3-cdfe-4346-bf2e-dc43c4d7a90c
 using Random
@@ -55,11 +55,60 @@ df1 = DataFrame(CSV.File("gdp.csv"))
 # ╔═╡ 286dff3d-d926-43b2-abcd-0c9c68fb978c
 df2 = CSV.File("gdp.csv") |> DataFrame
 
+# ╔═╡ 317347d7-54cd-4a01-bf61-6154e7a9e63e
+#=
+Other formats from which a Julian DataFrame can be created and written to are:  
+1. Arrow.jl
+2. Feather.jl
+3. Avro.jl
+4. JSONTables.jl
+5. Parquet.jl (Parquet)
+6. StatFiles.jl (Stata, SPSS, SAS)
+7. XLSX.jl
+=#
+# You can also use DelimitedFiles.jl for creating DataFrame
+
 # ╔═╡ 50e83a4f-68c6-45ff-bc58-fb24a1fdda83
 # using the CSV read() function
 
 # ╔═╡ b5352a9f-385f-4e1a-9bd4-c43a95681b9e
 df3 = CSV.read("gdp.csv", DataFrame) # Here DataFrame is passed as an object
+
+# ╔═╡ 2a147ec5-302b-4ef7-a25d-50a6a40916a6
+# create DataFrame column by column
+
+# ╔═╡ 322d07a8-95dc-490c-be8b-68b2cf332c19
+b = DataFrame()
+
+# ╔═╡ 946a5035-4586-442d-be37-b714ef171d99
+b.A = 1:20
+
+# ╔═╡ ed786d21-3bbf-4786-8ce1-3853de366a83
+b.B = repeat(["M", "F"], 10)
+
+# ╔═╡ 9470fd0e-286d-4ad4-bb5f-d76916a84d0e
+# create DataFrame row by row
+
+# ╔═╡ 977c1861-f6ef-4505-94e6-cdf064679487
+push!(b, [21, "M"])
+
+# ╔═╡ b74f2b45-dcd8-4cc8-9043-71b1388e475a
+push!(b, Dict(:A => 22, :B => "F"))
+
+# ╔═╡ bd7ccba5-3eea-4fa9-ac1b-4a3f67760b18
+# DataFrames supports Tables.jl which is the Julian interface to interact with tabular data
+
+# ╔═╡ 6a3c345c-4ea6-4b3f-9eb4-44779863d2d8
+CSV.write("df2csv.csv", b) # write to a CSV file
+
+# ╔═╡ 7d40b765-b7f7-400d-9269-6906ffe0d922
+SQLite.load!(b, SQLite.DB(), "df2sqlite_table") # in memory sqlite database
+
+# ╔═╡ 9a420cda-0e7b-4372-b5c5-bd8fd6319d42
+b1 = b |> @map({_.A, _.B}) |> DataFrame # transform df through Query.jl
+
+# ╔═╡ f17ec4dc-8e3d-4381-9b29-5ef755592036
+Tables.rowtable(b) # use NamedTuples for creating DataFrame
 
 # ╔═╡ f4b36082-c332-481c-96ba-dcbbd014cc80
 gdp = copy(df3)
@@ -137,18 +186,221 @@ first(gdp, 5)
 last(gdp, 5)
 
 # ╔═╡ e2bf6f84-a9f1-4dc4-be6a-3280451cc1ae
+view(gdp, 77:300, :) # or else use macro @view gdp[end:-1:1, [1, 4]]. No new objects is created while using view, hence gives better performance while you are trying to peek into the data.
 
+# ╔═╡ c901457f-312b-4dee-98ed-b81493f56030
+@timev gdp[1:end-1, 1:end-1]
+
+# ╔═╡ b1a61755-8791-48e6-90dd-cb6023034395
+@timev @view gdp[1:end-1, 1:end-1]
+
+# ╔═╡ 4e6fe563-2c1b-42dc-a83e-3c4207e447d2
+# view creates a mapping of indices from the view to the indices of the parent. As you can see in the chapter, view uses less memory allocations and takes less time than accessing dataframe using '[]' operator because no new object is created and points to the same memory location as of the parent. You can update the dataset using view and '[]' operator.
+
+# ╔═╡ 107f0e6d-a9a1-4414-bf45-b0b0b1c57c67
+# Broadcasting
+
+# ╔═╡ ee04f0e0-3a93-4adf-9b90-83987e1f1d1e
+# As opposed to R, broadcasting in Julia is similar to that of Python. We use '.' dot operator.
+
+# ╔═╡ e6da06de-fc3e-4a89-868f-62dc47490126
+ s = [24, 54.0, 345, 098765, 43, 231.4, 497.23]
+
+# ╔═╡ a2efce21-5f2a-43b9-9e1b-1861220617a7
+s[3:7] .= 0
+
+# ╔═╡ ed5802e5-65a1-4e8c-a633-613a07a3bfec
+# ':' operator does the broadcasting in place. '!' operator creates a new vector instead of replacing the old one.
+
+# ╔═╡ c0634c82-f36c-4bfa-8284-564adc309932
+insertcols!(df1, 1, :Country => "India") # this is called pseudo-broadcasting. It inserts columns in arbitrary places.
+
+# ╔═╡ 3aeeeb61-e004-4317-81c7-aa37d7ade55e
+# Selectors in DataFrame
 
 # ╔═╡ ee03f50a-3def-44aa-b14d-c4b5da7a9a63
-
+gdp[:, Not(:Period)]
 
 # ╔═╡ 72dfa3c2-ec92-4c97-98a7-525964218356
-
+gdp[:, Between(:Data_value, :MAGNTUDE)]
 
 # ╔═╡ 6d699f5b-0ac0-40b9-a601-ec0205131cdd
-
+gdp[:, Cols("Period", Between("Data_value", "MAGNTUDE"))]
 
 # ╔═╡ 08c1fbea-ad4f-414d-a942-6445a5fc8f62
+# You can use Regex to select columns too. Here, we select columns having number "6" and not the 3rd column.
+gdp[Not(3), r"6"]
+
+# ╔═╡ 6e8eafa8-6854-4b4b-8a02-a82f08314505
+# Transformation functions
+
+# ╔═╡ 81ecd06e-8c13-4dc0-81c9-ed575b8303bb
+gdp
+
+# ╔═╡ eccb8cec-d709-4682-bc34-2867402a6cfc
+combine(gdp, :Data_value => mean => :mean_data_value) # this aggregates data and makes a copy
+
+# ╔═╡ 86bbd468-ecc4-4026-9dd4-5d8f2b9d50dc
+select(gdp, :Data_value => mean => :mean_data_value) 
+# this broadcasted the result of the mean
+# in mean missing takes precedence
+
+# ╔═╡ e69776d2-3640-4c9f-aef2-d30a94dee390
+transform(gdp, :Data_value => maximum) # inserts a column with the maximum value of the dataframe
+
+
+# ╔═╡ 8ba893b5-97fc-4a41-9dc5-67f9c11708bc
+transform(gdp, :Subject => :Group, :Group => :Subject) # transform retains all columns present in parent dataframe unlike select
+
+# ╔═╡ acec4361-d271-41dd-b6cf-4571eae16406
+select(gdp, :Period, :Data_value, [:Period, :Data_value] => (-) => :resulting_vector) # this assumes both the columns to be consecutive and calculates the specified operation. Only +, - works. select always makes a copy of the columns. You can change this with argument copycols set to false.
+
+# ╔═╡ 38fb2132-8f03-4b5c-aa76-a265bac69497
+# Joins
+
+# ╔═╡ 454d0957-0cdc-4490-bbdc-8409b07cddcd
+#=
+Julia supports innerjoin, leftjoin, rightjoin, outerjoin, semijoin, antijoin and crossjoin.
+=#
+
+# ╔═╡ ff622ae3-b4ea-4b0c-90cb-a6d1cd7c857e
+pupil = DataFrame(Rno = [40, 50, 60, 80, 90, 100, 130], Name = ["P1", "P2", "P3", "P4", "P5", "P6", "P7"])
+
+# ╔═╡ c49773c7-cb73-437c-abb2-3e05e9b3c4f7
+mark = DataFrame(Rno = [20, 30, 60, 70, 90, 110, 120], Marks = [25, 45, 63, 72, 64, 87, 36])
+
+# ╔═╡ cd93d1b5-b587-4dc3-ae93-de0489163c3a
+innerjoin(pupil, mark, on = :Rno)
+
+# ╔═╡ 96202339-68d6-4d8b-af6e-f56e4b6b282d
+leftjoin(pupil, mark, on = :Rno)
+
+# ╔═╡ fd9351e2-e0b8-4042-b2d2-0b8cddf76b8a
+rightjoin(pupil, mark, on = :Rno)
+
+# ╔═╡ efdf00c9-f0b0-4d9b-b940-e0f4168220ac
+outerjoin(pupil, mark, on = :Rno)
+
+# ╔═╡ c1ad8951-554a-4f9c-ac02-2b86c69210e9
+semijoin(pupil, mark, on = :Rno)
+
+# ╔═╡ 005f08fc-15b8-4927-bf4f-6f656bd7c509
+antijoin(pupil, mark, on = :Rno)
+
+# ╔═╡ 0b81cbeb-e441-4ff7-8586-4aaaa14a5204
+crossjoin(pupil, mark, makeunique = true)
+
+# ╔═╡ 85c381d1-aa5b-4e36-b764-4f2c08056723
+new_pupil = DataFrame(Rno = [40, 50, 60, 80, 90, 100, 130], Name = ["P1", "P2", "P3", "P4", "P5", "P6", "P7"])
+
+# ╔═╡ bdab1a2a-e3e9-4dd6-ba5a-3f1cbd430e9a
+new_mark = DataFrame(ID = [20, 30, 60, 70, 90, 110, 120], Marks = [25, 45, 63, 72, 64, 87, 36])
+
+# ╔═╡ d348eb2c-ce88-4813-9fdd-dbb9f6263c79
+innerjoin(new_pupil, new_mark, on = :Rno => :ID) # if you have two columns conveying the same meaning but with differing names use on argument.
+
+# ╔═╡ f66dca42-73e6-4ed9-be87-8092f45f75ae
+outerjoin(new_pupil, new_mark, on = :Rno => :ID)
+
+# ╔═╡ 87c933d0-d56f-41ec-9740-42da3aea7b02
+outerjoin(pupil, mark, on=:Rno, validate=(true, true), source=:source) # for the two columns to be equal according to `isequal()`, an argument `validate` is introduced
+
+# ╔═╡ adef617a-8b1f-4198-ba22-95c2fc23e487
+# Grouping
+
+# ╔═╡ 7d8430ce-3b06-4007-a091-dd00ebe5a4bd
+grby = groupby(gdp, :Period)
+
+# ╔═╡ 46f31f61-afaa-4788-8f44-b83face4b005
+combine(gdp, :Period => mean)
+
+# ╔═╡ cb438dec-931a-4856-91ad-809d9d4d9106
+# Reshaping
+
+# ╔═╡ 490769ee-72b2-46cd-aa88-e5b3bfe2ca9e
+stack(gdp, 1:4) # convert from landscape to portrait format
+
+# ╔═╡ 6310d056-f97b-444e-b257-3b22774f7e86
+stack(gdp, [:MAGNTUDE, :UNITS], :Subject) # the 3rd argument shows which columsn are repeated
+
+# ╔═╡ e946a789-e9e1-4f46-b7b6-d278c0d6234c
+unstack(stack(gdp, Not(:Subject)), allowduplicates=true)
+
+# ╔═╡ bcae0cbd-d30f-458a-bc74-e969dab36ed1
+permutedims(b, 2, makeunique=true)
+
+# ╔═╡ 783edc23-96fe-4484-bef0-7666668171ac
+# Sorting
+
+# ╔═╡ a63091de-654b-43fa-93ab-466fb7ad7f38
+sort!(gdp)
+
+# ╔═╡ 5e351fca-85ea-4e52-b607-e693deac1719
+sort!(gdp, rev = true)
+
+# ╔═╡ 64d4462f-f8fd-4186-9d48-dffd76c12fe6
+sort!(gdp, [:Data_value, :MAGNTUDE])
+
+# ╔═╡ 38a542dc-eee3-45b5-a52f-e342af3da728
+sort!(gdp, [order(:Period, by=length), order(:Data_value, rev=true)]) # specify ordering for a particular set of columns
+
+# ╔═╡ 374a0805-1ed4-4eef-bab7-cc4da4659a72
+# Categorical Data
+
+# ╔═╡ 1dd794a3-61c0-4f27-af0d-89bfdc973bdb
+dat = CategoricalArray(repeat(["M", "F", missing], 3))
+
+# ╔═╡ d9a58858-2bb1-44b3-a4c6-30b5d62936c4
+levels(dat)
+
+# ╔═╡ fe58c5a4-8193-440d-be36-ac989017dc42
+levels!(dat, ["F", "M"]) # changes the order of appearance
+
+# ╔═╡ 4b158c96-0273-46f1-b6fe-c75fb0974dae
+sort(dat)
+
+# ╔═╡ 371e9b4c-1a94-42a9-b4ee-a837bd005a7a
+dat_new = compress(dat) # since Categorical Arrays can store upto \2^32 levels. compress() is used to lessen the memory space.
+
+# ╔═╡ fd45ccc8-7d10-4081-b681-ea398248b495
+dat2 = categorical(repeat(["N", "A", "P"], 3), ordered=true)
+
+# ╔═╡ 05e57f17-784e-49e5-815e-f7d94aea5ab8
+isordered(dat2)
+
+# ╔═╡ 466b9320-6fe1-41df-9dae-7c90a12fca5d
+dat == dat2
+
+# ╔═╡ 8ae1afae-ea67-49d9-be53-7909885fb083
+# Missing Data
+# We have gone through missing datatype previously. Here we will see just one examples of how to convert any missing data to have a numeric value in Julia
+
+# ╔═╡ 91559ca4-aa63-409c-a9da-c02726121bee
+missin = [8, 30, 41, missing]
+
+# ╔═╡ 27cdd96d-774e-4afb-b680-4f3f52a21e94
+coalesce.(missin, 0)
+
+# ╔═╡ f23449ba-ad22-4f75-a896-3aa8f94a3b74
+# Data Manipulation Frameworks
+
+# ╔═╡ 0d499e42-4467-4384-a5f9-193f259fec60
+# The main part of data analysis work is data manipulation. In Julia, we can use DataFramesMeta.jl and Query.jl to manipulate DataFrames which is similar to frameworks in Python/R.
+
+# ╔═╡ 6b3dc5c1-7c61-47fc-ae1b-03f4116de245
+@linq gdp |>
+           where(:Period .> 2000) |>
+           select(units="Percent", :Series_reference) # linq macro helps to perform a series of transformations of the DataFrame. You can use all the split-apply-combine methods here within linq macro.
+
+# ╔═╡ 27d5e59d-e9a0-49b3-805b-1637a5e9d078
+@from i in gdp begin
+            @where i.Period > 2000 && i.Data_value > 0
+            @select i.Series_reference
+            @collect
+       end
+# Query also helps you to manipulate the dataframe
+
+# ╔═╡ ca1077c7-6bfe-406f-95d5-1686328022e2
 
 
 # ╔═╡ 00000000-0000-0000-0000-000000000001
@@ -156,15 +408,25 @@ PLUTO_PROJECT_TOML_CONTENTS = """
 [deps]
 BenchmarkTools = "6e4b80f9-dd63-53aa-95a3-0cdb28fa8baf"
 CSV = "336ed68f-0bac-5ca0-87d4-7b16caf5d00b"
+CategoricalArrays = "324d7699-5711-5eae-9e2f-1d82baa6b597"
 DataFrames = "a93c6f00-e57d-5684-b7b6-d8193f3e46c0"
+DataFramesMeta = "1313f7d8-7da2-5740-9ea0-a2ca25f37964"
 Downloads = "f43a241f-c20a-4ad4-852c-f6b1247861c6"
+Query = "1a8c2f83-1ff3-5112-b086-8aa67b057ba1"
 Random = "9a3f8284-a2c9-5f02-9a11-845980a1fd5c"
+SQLite = "0aa819cd-b072-5ff4-a722-6bc24af294d9"
 Statistics = "10745b16-79ce-11e8-11f9-7d13ad32a3b2"
+Tables = "bd369af6-aec1-5ad0-b16a-f7cc5008161c"
 
 [compat]
 BenchmarkTools = "~1.1.4"
 CSV = "~0.8.5"
+CategoricalArrays = "~0.10.0"
 DataFrames = "~1.2.2"
+DataFramesMeta = "~0.9.0"
+Query = "~1.0.0"
+SQLite = "~1.1.4"
+Tables = "~1.5.0"
 """
 
 # ╔═╡ 00000000-0000-0000-0000-000000000002
@@ -186,11 +448,28 @@ git-tree-sha1 = "42ac5e523869a84eac9669eaceed9e4aa0e1587b"
 uuid = "6e4b80f9-dd63-53aa-95a3-0cdb28fa8baf"
 version = "1.1.4"
 
+[[BinaryProvider]]
+deps = ["Libdl", "Logging", "SHA"]
+git-tree-sha1 = "ecdec412a9abc8db54c0efc5548c64dfce072058"
+uuid = "b99e7846-7c00-51b0-8f62-c81ae34c0232"
+version = "0.5.10"
+
 [[CSV]]
 deps = ["Dates", "Mmap", "Parsers", "PooledArrays", "SentinelArrays", "Tables", "Unicode"]
 git-tree-sha1 = "b83aa3f513be680454437a0eee21001607e5d983"
 uuid = "336ed68f-0bac-5ca0-87d4-7b16caf5d00b"
 version = "0.8.5"
+
+[[CategoricalArrays]]
+deps = ["DataAPI", "Future", "JSON", "Missings", "Printf", "RecipesBase", "Statistics", "StructTypes", "Unicode"]
+git-tree-sha1 = "1562002780515d2573a4fb0c3715e4e57481075e"
+uuid = "324d7699-5711-5eae-9e2f-1d82baa6b597"
+version = "0.10.0"
+
+[[Chain]]
+git-tree-sha1 = "cac464e71767e8a04ceee82a889ca56502795705"
+uuid = "8be319e6-bccf-4806-a6f7-6fae938471bc"
+version = "0.4.8"
 
 [[Compat]]
 deps = ["Base64", "Dates", "DelimitedFiles", "Distributed", "InteractiveUtils", "LibGit2", "Libdl", "LinearAlgebra", "Markdown", "Mmap", "Pkg", "Printf", "REPL", "Random", "SHA", "Serialization", "SharedArrays", "Sockets", "SparseArrays", "Statistics", "Test", "UUIDs", "Unicode"]
@@ -203,6 +482,11 @@ git-tree-sha1 = "3f71217b538d7aaee0b69ab47d9b7724ca8afa0d"
 uuid = "a8cc5b0e-0ffa-5ad4-8c14-923d3ee1735f"
 version = "4.0.4"
 
+[[DBInterface]]
+git-tree-sha1 = "d3e9099ef8d63b180a671a35552f93a1e0250cbb"
+uuid = "a10d1c49-ce27-4219-8d33-6db1a4562965"
+version = "2.4.1"
+
 [[DataAPI]]
 git-tree-sha1 = "ee400abb2298bd13bfc3df1c412ed228061a2385"
 uuid = "9a962f9c-6df0-11e9-0e5d-c546b8b5ee8a"
@@ -214,6 +498,12 @@ git-tree-sha1 = "d785f42445b63fc86caa08bb9a9351008be9b765"
 uuid = "a93c6f00-e57d-5684-b7b6-d8193f3e46c0"
 version = "1.2.2"
 
+[[DataFramesMeta]]
+deps = ["Chain", "DataFrames", "MacroTools", "Reexport"]
+git-tree-sha1 = "807e984bf12084b39d99bb27e27ad45bf111d3a1"
+uuid = "1313f7d8-7da2-5740-9ea0-a2ca25f37964"
+version = "0.9.0"
+
 [[DataStructures]]
 deps = ["Compat", "InteractiveUtils", "OrderedCollections"]
 git-tree-sha1 = "7d9d316f04214f7efdbb6398d545446e246eff02"
@@ -224,6 +514,12 @@ version = "0.18.10"
 git-tree-sha1 = "bfc1187b79289637fa0ef6d4436ebdfe6905cbd6"
 uuid = "e2d170a0-9d28-54be-80f0-106bbe20a464"
 version = "1.0.0"
+
+[[DataValues]]
+deps = ["DataValueInterfaces", "Dates"]
+git-tree-sha1 = "d88a19299eba280a6d062e135a43f00323ae70bf"
+uuid = "e7dc6d0d-1eca-5fa6-8ad6-5aecde8b7ea5"
+version = "0.4.13"
 
 [[Dates]]
 deps = ["Printf"]
@@ -261,10 +557,22 @@ git-tree-sha1 = "15732c475062348b0165684ffe28e85ea8396afc"
 uuid = "41ab1584-1d38-5bbf-9106-f11c6c58b48f"
 version = "1.0.0"
 
+[[IterableTables]]
+deps = ["DataValues", "IteratorInterfaceExtensions", "Requires", "TableTraits", "TableTraitsUtils"]
+git-tree-sha1 = "70300b876b2cebde43ebc0df42bc8c94a144e1b4"
+uuid = "1c8ee90f-4401-5389-894e-7a04a3dc0f4d"
+version = "1.0.0"
+
 [[IteratorInterfaceExtensions]]
 git-tree-sha1 = "a3f24677c21f5bbe9d2a714f95dcd58337fb2856"
 uuid = "82899510-4779-5014-852e-03e436cf321d"
 version = "1.0.0"
+
+[[JLLWrappers]]
+deps = ["Preferences"]
+git-tree-sha1 = "642a199af8b68253517b80bd3bfd17eb4e84df6e"
+uuid = "692b3bcd-3c85-4b1f-b108-f13ce0eb3210"
+version = "1.3.0"
 
 [[JSON]]
 deps = ["Dates", "Mmap", "Parsers", "Unicode"]
@@ -297,6 +605,12 @@ uuid = "37e2e46d-f89d-539d-b4ee-838fcccc9c8e"
 
 [[Logging]]
 uuid = "56ddb016-857b-54e1-b83d-db4d58db5568"
+
+[[MacroTools]]
+deps = ["Markdown", "Random"]
+git-tree-sha1 = "0fb723cd8c45858c22169b2e42269e53271a6df7"
+uuid = "1914dd2f-81c6-5fcd-8719-6d5c9610ff09"
+version = "0.5.7"
 
 [[Markdown]]
 deps = ["Base64"]
@@ -342,6 +656,12 @@ git-tree-sha1 = "a193d6ad9c45ada72c14b731a318bedd3c2f00cf"
 uuid = "2dfb63ee-cc39-5dd5-95bd-886bf059d720"
 version = "1.3.0"
 
+[[Preferences]]
+deps = ["TOML"]
+git-tree-sha1 = "00cfd92944ca9c760982747e9a1d0d5d86ab1e5a"
+uuid = "21216c6a-2e73-6563-6e65-726566657250"
+version = "1.2.2"
+
 [[PrettyTables]]
 deps = ["Crayons", "Formatting", "Markdown", "Reexport", "Tables"]
 git-tree-sha1 = "0d1245a357cc61c8cd61934c07447aa569ff22e6"
@@ -352,6 +672,18 @@ version = "1.1.0"
 deps = ["Unicode"]
 uuid = "de0858da-6303-5e67-8744-51eddeeeb8d7"
 
+[[Query]]
+deps = ["DataValues", "IterableTables", "MacroTools", "QueryOperators", "Statistics"]
+git-tree-sha1 = "a66aa7ca6f5c29f0e303ccef5c8bd55067df9bbe"
+uuid = "1a8c2f83-1ff3-5112-b086-8aa67b057ba1"
+version = "1.0.0"
+
+[[QueryOperators]]
+deps = ["DataStructures", "DataValues", "IteratorInterfaceExtensions", "TableShowUtils"]
+git-tree-sha1 = "911c64c204e7ecabfd1872eb93c49b4e7c701f02"
+uuid = "2aef5ad7-51ca-5a8f-8e88-e75cf067b44b"
+version = "0.9.3"
+
 [[REPL]]
 deps = ["InteractiveUtils", "Markdown", "Sockets", "Unicode"]
 uuid = "3fa0cd96-eef1-5676-8a61-b3b8758bbffb"
@@ -360,13 +692,36 @@ uuid = "3fa0cd96-eef1-5676-8a61-b3b8758bbffb"
 deps = ["Serialization"]
 uuid = "9a3f8284-a2c9-5f02-9a11-845980a1fd5c"
 
+[[RecipesBase]]
+git-tree-sha1 = "44a75aa7a527910ee3d1751d1f0e4148698add9e"
+uuid = "3cdcf5f2-1ef4-517c-9805-6587b60abb01"
+version = "1.1.2"
+
 [[Reexport]]
 git-tree-sha1 = "45e428421666073eab6f2da5c9d310d99bb12f9b"
 uuid = "189a3867-3050-52da-a836-e630ba90ab69"
 version = "1.2.2"
 
+[[Requires]]
+deps = ["UUIDs"]
+git-tree-sha1 = "4036a3bd08ac7e968e27c203d45f5fff15020621"
+uuid = "ae029012-a4dd-5104-9daa-d747884805df"
+version = "1.1.3"
+
 [[SHA]]
 uuid = "ea8e919c-243c-51af-8825-aaa63cd721ce"
+
+[[SQLite]]
+deps = ["BinaryProvider", "DBInterface", "Dates", "Libdl", "Random", "SQLite_jll", "Serialization", "Tables", "Test", "WeakRefStrings"]
+git-tree-sha1 = "97261d38a26415048ce87f49a7a20902aa047836"
+uuid = "0aa819cd-b072-5ff4-a722-6bc24af294d9"
+version = "1.1.4"
+
+[[SQLite_jll]]
+deps = ["Artifacts", "JLLWrappers", "Libdl", "Pkg", "Zlib_jll"]
+git-tree-sha1 = "9a0e24b81e3ce02c4b2eb855476467c7b93b8a8f"
+uuid = "76ed43ae-9a5d-5a62-8c75-30186b810ce8"
+version = "3.36.0+0"
 
 [[SentinelArrays]]
 deps = ["Dates", "Random"]
@@ -398,15 +753,33 @@ uuid = "2f01184e-e22b-5df5-ae63-d93ebab69eaf"
 deps = ["LinearAlgebra", "SparseArrays"]
 uuid = "10745b16-79ce-11e8-11f9-7d13ad32a3b2"
 
+[[StructTypes]]
+deps = ["Dates", "UUIDs"]
+git-tree-sha1 = "8445bf99a36d703a09c601f9a57e2f83000ef2ae"
+uuid = "856f2bd8-1eba-4b0a-8007-ebc267875bd4"
+version = "1.7.3"
+
 [[TOML]]
 deps = ["Dates"]
 uuid = "fa267f1f-6049-4f14-aa54-33bafae1ed76"
+
+[[TableShowUtils]]
+deps = ["DataValues", "Dates", "JSON", "Markdown", "Test"]
+git-tree-sha1 = "14c54e1e96431fb87f0d2f5983f090f1b9d06457"
+uuid = "5e66a065-1f0a-5976-b372-e0b8c017ca10"
+version = "0.2.5"
 
 [[TableTraits]]
 deps = ["IteratorInterfaceExtensions"]
 git-tree-sha1 = "c06b2f539df1c6efa794486abfb6ed2022561a39"
 uuid = "3783bdb8-4a98-5b6b-af9a-565f29a5fe9c"
 version = "1.0.1"
+
+[[TableTraitsUtils]]
+deps = ["DataValues", "IteratorInterfaceExtensions", "Missings", "TableTraits"]
+git-tree-sha1 = "78fecfe140d7abb480b53a44f3f85b6aa373c293"
+uuid = "382cd787-c1b6-5bf2-a167-d5b971a19bda"
+version = "1.0.2"
 
 [[Tables]]
 deps = ["DataAPI", "DataValueInterfaces", "IteratorInterfaceExtensions", "LinearAlgebra", "TableTraits", "Test"]
@@ -428,6 +801,12 @@ uuid = "cf7118a7-6976-5b1a-9a39-7adc72f591a4"
 
 [[Unicode]]
 uuid = "4ec0a83e-493e-50e2-b9ac-8f72acf5a8f5"
+
+[[WeakRefStrings]]
+deps = ["DataAPI", "Random", "Test"]
+git-tree-sha1 = "28807f85197eaad3cbd2330386fac1dcb9e7e11d"
+uuid = "ea10d353-3f73-51f8-a26c-33c1cb351aa5"
+version = "0.6.2"
 
 [[Zlib_jll]]
 deps = ["Libdl"]
@@ -458,8 +837,21 @@ uuid = "3f19e933-33d8-53b3-aaab-bd5110c3b7a0"
 # ╠═92083de8-cb06-48c8-bca3-14a84c80587f
 # ╠═9a12e206-a900-40e1-ad28-348dfba3b840
 # ╠═286dff3d-d926-43b2-abcd-0c9c68fb978c
+# ╠═317347d7-54cd-4a01-bf61-6154e7a9e63e
 # ╠═50e83a4f-68c6-45ff-bc58-fb24a1fdda83
 # ╠═b5352a9f-385f-4e1a-9bd4-c43a95681b9e
+# ╠═2a147ec5-302b-4ef7-a25d-50a6a40916a6
+# ╠═322d07a8-95dc-490c-be8b-68b2cf332c19
+# ╠═946a5035-4586-442d-be37-b714ef171d99
+# ╠═ed786d21-3bbf-4786-8ce1-3853de366a83
+# ╠═9470fd0e-286d-4ad4-bb5f-d76916a84d0e
+# ╠═977c1861-f6ef-4505-94e6-cdf064679487
+# ╠═b74f2b45-dcd8-4cc8-9043-71b1388e475a
+# ╠═bd7ccba5-3eea-4fa9-ac1b-4a3f67760b18
+# ╠═6a3c345c-4ea6-4b3f-9eb4-44779863d2d8
+# ╠═7d40b765-b7f7-400d-9269-6906ffe0d922
+# ╠═9a420cda-0e7b-4372-b5c5-bd8fd6319d42
+# ╠═f17ec4dc-8e3d-4381-9b29-5ef755592036
 # ╠═f5d6e9e3-d260-4778-b19c-2d345c06d1e6
 # ╠═f4b36082-c332-481c-96ba-dcbbd014cc80
 # ╠═70474af2-007d-4a11-b7ce-d102916875b5
@@ -485,9 +877,72 @@ uuid = "3f19e933-33d8-53b3-aaab-bd5110c3b7a0"
 # ╠═c2db935d-f49c-4538-acbd-de75399ae932
 # ╠═2de6853a-9c0b-414f-a3fa-af38bf407a6a
 # ╠═e2bf6f84-a9f1-4dc4-be6a-3280451cc1ae
+# ╠═c901457f-312b-4dee-98ed-b81493f56030
+# ╠═b1a61755-8791-48e6-90dd-cb6023034395
+# ╠═4e6fe563-2c1b-42dc-a83e-3c4207e447d2
+# ╠═107f0e6d-a9a1-4414-bf45-b0b0b1c57c67
+# ╠═ee04f0e0-3a93-4adf-9b90-83987e1f1d1e
+# ╠═e6da06de-fc3e-4a89-868f-62dc47490126
+# ╠═a2efce21-5f2a-43b9-9e1b-1861220617a7
+# ╠═ed5802e5-65a1-4e8c-a633-613a07a3bfec
+# ╠═c0634c82-f36c-4bfa-8284-564adc309932
+# ╠═3aeeeb61-e004-4317-81c7-aa37d7ade55e
 # ╠═ee03f50a-3def-44aa-b14d-c4b5da7a9a63
 # ╠═72dfa3c2-ec92-4c97-98a7-525964218356
 # ╠═6d699f5b-0ac0-40b9-a601-ec0205131cdd
 # ╠═08c1fbea-ad4f-414d-a942-6445a5fc8f62
+# ╠═6e8eafa8-6854-4b4b-8a02-a82f08314505
+# ╠═81ecd06e-8c13-4dc0-81c9-ed575b8303bb
+# ╠═eccb8cec-d709-4682-bc34-2867402a6cfc
+# ╠═86bbd468-ecc4-4026-9dd4-5d8f2b9d50dc
+# ╠═e69776d2-3640-4c9f-aef2-d30a94dee390
+# ╠═8ba893b5-97fc-4a41-9dc5-67f9c11708bc
+# ╠═acec4361-d271-41dd-b6cf-4571eae16406
+# ╠═38fb2132-8f03-4b5c-aa76-a265bac69497
+# ╠═454d0957-0cdc-4490-bbdc-8409b07cddcd
+# ╠═ff622ae3-b4ea-4b0c-90cb-a6d1cd7c857e
+# ╠═c49773c7-cb73-437c-abb2-3e05e9b3c4f7
+# ╠═cd93d1b5-b587-4dc3-ae93-de0489163c3a
+# ╠═96202339-68d6-4d8b-af6e-f56e4b6b282d
+# ╠═fd9351e2-e0b8-4042-b2d2-0b8cddf76b8a
+# ╠═efdf00c9-f0b0-4d9b-b940-e0f4168220ac
+# ╠═c1ad8951-554a-4f9c-ac02-2b86c69210e9
+# ╠═005f08fc-15b8-4927-bf4f-6f656bd7c509
+# ╠═0b81cbeb-e441-4ff7-8586-4aaaa14a5204
+# ╠═85c381d1-aa5b-4e36-b764-4f2c08056723
+# ╠═bdab1a2a-e3e9-4dd6-ba5a-3f1cbd430e9a
+# ╠═d348eb2c-ce88-4813-9fdd-dbb9f6263c79
+# ╠═f66dca42-73e6-4ed9-be87-8092f45f75ae
+# ╠═87c933d0-d56f-41ec-9740-42da3aea7b02
+# ╠═adef617a-8b1f-4198-ba22-95c2fc23e487
+# ╠═7d8430ce-3b06-4007-a091-dd00ebe5a4bd
+# ╠═46f31f61-afaa-4788-8f44-b83face4b005
+# ╠═cb438dec-931a-4856-91ad-809d9d4d9106
+# ╠═490769ee-72b2-46cd-aa88-e5b3bfe2ca9e
+# ╠═6310d056-f97b-444e-b257-3b22774f7e86
+# ╠═e946a789-e9e1-4f46-b7b6-d278c0d6234c
+# ╠═bcae0cbd-d30f-458a-bc74-e969dab36ed1
+# ╠═783edc23-96fe-4484-bef0-7666668171ac
+# ╠═a63091de-654b-43fa-93ab-466fb7ad7f38
+# ╠═5e351fca-85ea-4e52-b607-e693deac1719
+# ╠═64d4462f-f8fd-4186-9d48-dffd76c12fe6
+# ╠═38a542dc-eee3-45b5-a52f-e342af3da728
+# ╠═374a0805-1ed4-4eef-bab7-cc4da4659a72
+# ╠═1dd794a3-61c0-4f27-af0d-89bfdc973bdb
+# ╠═d9a58858-2bb1-44b3-a4c6-30b5d62936c4
+# ╠═fe58c5a4-8193-440d-be36-ac989017dc42
+# ╠═4b158c96-0273-46f1-b6fe-c75fb0974dae
+# ╠═371e9b4c-1a94-42a9-b4ee-a837bd005a7a
+# ╠═fd45ccc8-7d10-4081-b681-ea398248b495
+# ╠═05e57f17-784e-49e5-815e-f7d94aea5ab8
+# ╠═466b9320-6fe1-41df-9dae-7c90a12fca5d
+# ╠═8ae1afae-ea67-49d9-be53-7909885fb083
+# ╠═91559ca4-aa63-409c-a9da-c02726121bee
+# ╠═27cdd96d-774e-4afb-b680-4f3f52a21e94
+# ╠═f23449ba-ad22-4f75-a896-3aa8f94a3b74
+# ╠═0d499e42-4467-4384-a5f9-193f259fec60
+# ╠═6b3dc5c1-7c61-47fc-ae1b-03f4116de245
+# ╠═27d5e59d-e9a0-49b3-805b-1637a5e9d078
+# ╠═ca1077c7-6bfe-406f-95d5-1686328022e2
 # ╟─00000000-0000-0000-0000-000000000001
 # ╟─00000000-0000-0000-0000-000000000002
