@@ -11,18 +11,67 @@ using Distributions
 using Random
 
 # ╔═╡ 3f22bbfc-12c6-48e1-a2ce-c2d673fdf8d1
-
+Random.seed!(42)
 
 # ╔═╡ eeb51554-b9dd-4721-81db-3d7f862cc890
+# Let's start of with the most popular, "Normal Distribution"
 
+n = Normal()
 
 # ╔═╡ 471b0226-a36a-447f-a72a-8f4f833f0c88
+# We are creating random set of values which have a simple Normal Distribution (Bell Curve Shape), i.e. mean is zero, standard deviation is 1, skew is zero and a kurtosis of 3. In Normal Distribution, 68% of the values are within mean(+/-)std, 95% are within mean(+/-)2*std, 99.7% are within mean(+/-)3*std.
 
+rd = rand(n, 100)
 
 # ╔═╡ ef470561-eb8c-4c6d-b0c9-985e74f801a2
+# It being a probability distribution, we can simply call functions for finding CDF and PDF. Other statistical functions can be applied similarly.
 
+# The cumulative distribution function is the probability that a random variable will take a value less than or equal to the variable.
+
+# The probability density function is the probability that a random variable will take a value exactly equal to itself.
 
 # ╔═╡ da29b537-7def-4d69-aea0-02f23014e379
+cdf(n, 1.5) - cdf(n, 0.5)
+
+# ╔═╡ 025f79ce-0d3d-4354-8f16-1d1fede9c551
+sum(pdf.(Uniform(0, 1), 0.8)) === pdf(Uniform(0, 1), 0.8)
+
+# ╔═╡ 30585ae9-215e-446a-aa29-12f1c60ed082
+# This package contains discrete and continuous univariate, multi-variate and matrix-variate probability distribution classes and their related functions.
+
+# ╔═╡ 9114121f-4df4-49dd-804f-2c99033474cc
+# This is a type of discrete mutlivariate.
+
+# If you are unsure about what parameters the various distributions use, you can use `fieldnames` for the same.
+
+fieldnames(Multinomial)
+
+# ╔═╡ dd2223fe-20fa-4e04-80c7-a7bbb86458e5
+# Let's try to estimate empirical distribution to a theoretical one.
+
+fit(Normal, rd)
+
+# [μ=0.0, σ=1] for the Normal distribution rd, and theoretically we got values almost equal to the assumption.
+
+# ╔═╡ bc8e946c-2488-4177-b017-a7d455a9fc25
+# DataTypes of Distributions package
+
+# ╔═╡ eeafd017-8056-4c74-a29f-2429e3d5750c
+#= 
+
+The abstract datatype of the package is `Sampleable` which comprises of objects from which we can extract samples i.e. samplers and distributions. 
+
+The type of Samplers that can be used are `VariateForm` and `ValueSupport`.
+
+VariateForm as in if it is univariate, multi-variate or matrix-variate. 
+
+The subtypes of ValueSupport are discrete  or continuous. 
+
+This is used to extract basic information about the samples such as length, size, number of samples, etc. and to extract samples by using random sampler function.
+
+=#
+
+# ╔═╡ b88f392c-8a1a-4acf-b3cd-c31d7a4fd627
 
 
 # ╔═╡ 00000000-0000-0000-0000-000000000001
@@ -335,5 +384,12 @@ uuid = "3f19e933-33d8-53b3-aaab-bd5110c3b7a0"
 # ╠═471b0226-a36a-447f-a72a-8f4f833f0c88
 # ╠═ef470561-eb8c-4c6d-b0c9-985e74f801a2
 # ╠═da29b537-7def-4d69-aea0-02f23014e379
+# ╠═025f79ce-0d3d-4354-8f16-1d1fede9c551
+# ╠═30585ae9-215e-446a-aa29-12f1c60ed082
+# ╠═9114121f-4df4-49dd-804f-2c99033474cc
+# ╠═dd2223fe-20fa-4e04-80c7-a7bbb86458e5
+# ╠═bc8e946c-2488-4177-b017-a7d455a9fc25
+# ╠═eeafd017-8056-4c74-a29f-2429e3d5750c
+# ╠═b88f392c-8a1a-4acf-b3cd-c31d7a4fd627
 # ╟─00000000-0000-0000-0000-000000000001
 # ╟─00000000-0000-0000-0000-000000000002
