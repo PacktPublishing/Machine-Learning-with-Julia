@@ -1,5 +1,5 @@
 ### A Pluto.jl notebook ###
-# v0.15.1
+# v0.16.1
 
 using Markdown
 using InteractiveUtils
@@ -11,7 +11,7 @@ using Distributions
 using Random
 
 # ╔═╡ 3f22bbfc-12c6-48e1-a2ce-c2d673fdf8d1
-Random.seed!(42)
+rng = Random.seed!(42)
 
 # ╔═╡ eeb51554-b9dd-4721-81db-3d7f862cc890
 # Let's start of with the most popular, "Normal Distribution"
@@ -67,12 +67,112 @@ VariateForm as in if it is univariate, multi-variate or matrix-variate.
 
 The subtypes of ValueSupport are discrete  or continuous. 
 
-This is used to extract basic information about the samples such as length, size, number of samples, etc. and to extract samples by using random sampler function.
+ValueSupport type is used to extract basic information about the samples such as length, size, number of samples, etc. and to extract samples by using random sampler function.
+
+A subtype of Sampleable is `Distribution` which combines both VariateForm types and ValueSupport types which in turn can be used to apply its probability density functions among other things.
 
 =#
 
-# ╔═╡ b88f392c-8a1a-4acf-b3cd-c31d7a4fd627
+# ╔═╡ a6d477ff-5445-403f-9839-e2cad6152ce9
+# Univariate Distributions
 
+# ╔═╡ b9d0b2c0-914f-4f67-a839-50aa71958ebc
+# NOTE: All distributions are immutable hence inplace vectorized evaluation has been deprecated
+
+# ╔═╡ 1a2d1c6e-5cf9-48f9-b0fd-a3a608e805b8
+# Continuous Univariate Distributions
+
+# ╔═╡ e3278e81-5f16-4754-8dba-6bca7f10539d
+a = Arcsine()
+
+# ╔═╡ 5fc942b6-18b5-4133-994e-8f6df0c1fd33
+params(a) # return values of parameters
+
+# ╔═╡ 26be10a1-68af-4482-9f64-54c970b2e8d1
+location(a) # get the left bound of the distribution
+
+# ╔═╡ 9159c57b-ac3d-4bc0-bf89-ec2965953903
+b = Beta()
+
+# ╔═╡ a64f12cf-f4c2-468d-b883-5ff2ae51e605
+extrema(b) # returns minimum and maximum values as a tuple
+
+# ╔═╡ 9c7c3d1d-74b6-4767-ac3a-f30dc6190680
+mean(b) # default mean is returned
+
+# ╔═╡ 5919ad85-4b11-4a0d-95ff-d4aa32b7889f
+entropy(b, 0.5) # compute entropy of the distribution w.r.t. the base value given
+
+# ╔═╡ dcbfd625-a4c9-447f-9215-0eed31f23de6
+pdfsquaredL2norm(b) # computes squared L2 norm of prob density of the distribution
+
+# ╔═╡ ed33234c-91cb-4f92-9111-6f25fce99faf
+b1 = BetaPrime()
+
+# ╔═╡ e561d4f9-d855-40a2-89e3-3de6ffcb5c7f
+
+
+# ╔═╡ 4c8ca066-2963-485d-982f-d338eab90c7b
+rand(rng, b1) === quantile(b1, rand(rng)) # generate a random sample
+
+# ╔═╡ 180e37ba-a2cb-4dbc-9a27-e11e08460670
+
+
+# ╔═╡ 0e2fda44-f052-4a85-a00d-1f2e64b859ee
+rand(rng, b1)
+
+# ╔═╡ bcf9d2f5-7f87-4a54-b23e-5189efac9cbc
+quantile(b1, rand(rng))
+
+# ╔═╡ e1e7a04a-684a-426b-b3bc-4e7767b2494f
+b2 = Biweight()
+
+# ╔═╡ 60fd87ba-08e2-4897-9cd8-187452151978
+logpdf(b2, 0.5) # evaluate log of prob density at mass=0.5
+
+# ╔═╡ f1875391-cc8d-49bb-a903-83a138594dd5
+quantile(b2, 0.7) # computes inverse cumulative distribution function at 0.7
+
+# ╔═╡ ba40b5f1-3dd6-4fe4-8557-3f87e95822da
+c = Cauchy()
+
+# ╔═╡ 324a3a13-87c5-4dc9-8d35-b5f7fbb93109
+scale(c)
+
+# ╔═╡ 8daba87d-59e8-44c6-af7d-6e4b0aca5a75
+median(c)
+
+# ╔═╡ f74c6cba-99f5-48b1-a6b9-b523ea55930d
+c1 = Chernoff()
+
+# ╔═╡ 1afbf359-d389-4191-ad83-cea349dcb564
+cdf(Chernoff(), -0.5) === 1-cdf(Chernoff(), 0.5) # evaluate tail prob
+
+# ╔═╡ cbdfaa67-e11f-4f11-8c68-30015929847a
+
+
+# ╔═╡ cd6a616f-9054-46f6-ab58-2023ef2732e2
+
+
+# ╔═╡ a1083141-cf94-408d-8181-bfe2e3daf9b3
+
+
+# ╔═╡ f7c41616-b468-4496-8f85-527d8b3fcfda
+
+
+# ╔═╡ 12e16b48-bb71-4944-b915-f00f59633a28
+
+
+# ╔═╡ 7e2ea0b4-68c3-46b2-bb76-43d2fcc959db
+
+
+# ╔═╡ 5dc859a8-c12f-44da-8ac8-50896fb7c7e2
+
+
+# ╔═╡ b88f392c-8a1a-4acf-b3cd-c31d7a4fd627
+#=
+NOTE: Go through https://turing.ml/dev/tutorials/00-introduction/ to get an easy understanding of Bayesian Inferential learning in Julia using Turing.jl package. We haven't covered this in the book.
+=#
 
 # ╔═╡ 00000000-0000-0000-0000-000000000001
 PLUTO_PROJECT_TOML_CONTENTS = """
@@ -390,6 +490,38 @@ uuid = "3f19e933-33d8-53b3-aaab-bd5110c3b7a0"
 # ╠═dd2223fe-20fa-4e04-80c7-a7bbb86458e5
 # ╠═bc8e946c-2488-4177-b017-a7d455a9fc25
 # ╠═eeafd017-8056-4c74-a29f-2429e3d5750c
+# ╠═a6d477ff-5445-403f-9839-e2cad6152ce9
+# ╠═b9d0b2c0-914f-4f67-a839-50aa71958ebc
+# ╠═1a2d1c6e-5cf9-48f9-b0fd-a3a608e805b8
+# ╠═e3278e81-5f16-4754-8dba-6bca7f10539d
+# ╠═5fc942b6-18b5-4133-994e-8f6df0c1fd33
+# ╠═26be10a1-68af-4482-9f64-54c970b2e8d1
+# ╠═9159c57b-ac3d-4bc0-bf89-ec2965953903
+# ╠═a64f12cf-f4c2-468d-b883-5ff2ae51e605
+# ╠═9c7c3d1d-74b6-4767-ac3a-f30dc6190680
+# ╠═5919ad85-4b11-4a0d-95ff-d4aa32b7889f
+# ╠═dcbfd625-a4c9-447f-9215-0eed31f23de6
+# ╠═ed33234c-91cb-4f92-9111-6f25fce99faf
+# ╠═e561d4f9-d855-40a2-89e3-3de6ffcb5c7f
+# ╠═4c8ca066-2963-485d-982f-d338eab90c7b
+# ╠═180e37ba-a2cb-4dbc-9a27-e11e08460670
+# ╠═0e2fda44-f052-4a85-a00d-1f2e64b859ee
+# ╠═bcf9d2f5-7f87-4a54-b23e-5189efac9cbc
+# ╠═e1e7a04a-684a-426b-b3bc-4e7767b2494f
+# ╠═60fd87ba-08e2-4897-9cd8-187452151978
+# ╠═f1875391-cc8d-49bb-a903-83a138594dd5
+# ╠═ba40b5f1-3dd6-4fe4-8557-3f87e95822da
+# ╠═324a3a13-87c5-4dc9-8d35-b5f7fbb93109
+# ╠═8daba87d-59e8-44c6-af7d-6e4b0aca5a75
+# ╠═f74c6cba-99f5-48b1-a6b9-b523ea55930d
+# ╠═1afbf359-d389-4191-ad83-cea349dcb564
+# ╠═cbdfaa67-e11f-4f11-8c68-30015929847a
+# ╠═cd6a616f-9054-46f6-ab58-2023ef2732e2
+# ╠═a1083141-cf94-408d-8181-bfe2e3daf9b3
+# ╠═f7c41616-b468-4496-8f85-527d8b3fcfda
+# ╠═12e16b48-bb71-4944-b915-f00f59633a28
+# ╠═7e2ea0b4-68c3-46b2-bb76-43d2fcc959db
+# ╠═5dc859a8-c12f-44da-8ac8-50896fb7c7e2
 # ╠═b88f392c-8a1a-4acf-b3cd-c31d7a4fd627
 # ╟─00000000-0000-0000-0000-000000000001
 # ╟─00000000-0000-0000-0000-000000000002
