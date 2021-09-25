@@ -109,20 +109,15 @@ pdfsquaredL2norm(b) # computes squared L2 norm of prob density of the distributi
 # ╔═╡ ed33234c-91cb-4f92-9111-6f25fce99faf
 b1 = BetaPrime()
 
-# ╔═╡ e561d4f9-d855-40a2-89e3-3de6ffcb5c7f
-
-
 # ╔═╡ 4c8ca066-2963-485d-982f-d338eab90c7b
 rand(rng, b1) === quantile(b1, rand(rng)) # generate a random sample
+# This will output false as rand(rng) is called two times. Generating a random sample is almost equivalent to quantile of the distribution
 
-# ╔═╡ 180e37ba-a2cb-4dbc-9a27-e11e08460670
+# ╔═╡ 3ec79418-2b81-430c-8cae-1abb29247c58
+(α, β) = params(b1)
 
-
-# ╔═╡ 0e2fda44-f052-4a85-a00d-1f2e64b859ee
-rand(rng, b1)
-
-# ╔═╡ bcf9d2f5-7f87-4a54-b23e-5189efac9cbc
-quantile(b1, rand(rng))
+# ╔═╡ fd37d4e4-e0d7-4711-8d7e-2ff8507dc83b
+rand(rng, Gamma(α)) / rand(rng, Gamma(β)) # this value is equal to rand(rng, b1)
 
 # ╔═╡ e1e7a04a-684a-426b-b3bc-4e7767b2494f
 b2 = Biweight()
@@ -145,33 +140,306 @@ median(c)
 # ╔═╡ f74c6cba-99f5-48b1-a6b9-b523ea55930d
 c1 = Chernoff()
 
-# ╔═╡ 1afbf359-d389-4191-ad83-cea349dcb564
-cdf(Chernoff(), -0.5) === 1-cdf(Chernoff(), 0.5) # evaluate tail prob
-
-# ╔═╡ cbdfaa67-e11f-4f11-8c68-30015929847a
-
-
 # ╔═╡ cd6a616f-9054-46f6-ab58-2023ef2732e2
-
+cdf(c1, 0.5) + cdf(c1, -0.5) # evaluate tail probability; almost equivalent to 1
 
 # ╔═╡ a1083141-cf94-408d-8181-bfe2e3daf9b3
-
+var(c1) # evaluate variance of a basic Chernoff distribution
 
 # ╔═╡ f7c41616-b468-4496-8f85-527d8b3fcfda
-
+kurtosis(c1) # evaluate kurtosis of a basic Chernoff distribution
 
 # ╔═╡ 12e16b48-bb71-4944-b915-f00f59633a28
-
+skewness(c1) # evaluate skewness of a basic Chernoff distribution
 
 # ╔═╡ 7e2ea0b4-68c3-46b2-bb76-43d2fcc959db
-
+entropy(c1) # evaluate entropy of a basic Chernoff distribution
 
 # ╔═╡ 5dc859a8-c12f-44da-8ac8-50896fb7c7e2
+c2 = Chi(3) # Chi distribution with 3 degrees of freedom
 
+# ╔═╡ 708ac013-715b-4df4-8a40-96501e093274
+ dof(c2) # returns degrees of freedom
+
+# ╔═╡ af163e63-604a-4f4c-b57f-b0cc00378324
+pdfsquaredL2norm(c2) # returns squared L2 norm of probability density function of Chi distribution
+
+# ╔═╡ f9f6e408-30d4-4f7e-b64f-e3a8ff8e92d1
+kurtosis(c2)
+
+# ╔═╡ 98a4752e-53af-4d29-bdea-d76577fd8a5c
+sampler(c2) # Samplers can frequently rely on pre-computed values to enhance efficiency. It can be equipped with this sampler technique for batch sampling.
+
+# ╔═╡ cfdfd9a0-9017-4116-be43-fced34b58606
+mean(c2)
+
+# ╔═╡ e289e579-30e8-4292-934c-f7d7f56886e5
+gradlogpdf(c2, 0.7)
+
+# ╔═╡ c05d0cd1-db06-4818-a05c-6b4d560c7abe
+logpdf(c2, 0.5) # logarithm of prob density function at 0.5
+
+# ╔═╡ 76c4ffc3-2d4f-4f2f-b22d-5a9a2812cbdd
+ c3 = Chisq(2)
+
+# ╔═╡ f05b9262-f373-491a-b690-b3e1854bd388
+params(c3)
+
+# ╔═╡ 9197be83-f28d-462a-800e-b572b942e87e
+sampler(c3)
+
+# ╔═╡ 83de8601-722d-4ec2-8bcd-8808984b12fd
+pdfsquaredL2norm(c3)
+
+# ╔═╡ 21474254-5742-4c22-b2ad-575f4ed2f47c
+logpdf(c3, 0.5)
+
+# ╔═╡ 1d56e469-9c7c-48c3-b997-0dbd38234f83
+c4 = Cosine()
+
+# ╔═╡ fd09566a-acdf-4999-9a32-fdfd518177e8
+ccdf(c4, 0.3)
+
+# ╔═╡ ac83ee95-5f7b-4df3-9c12-1e66e472b3d6
+cdf(c4, 0.7)
+
+# ╔═╡ b0aabc61-10f1-453c-aefa-c098d614ecd6
+skewness(c4)
+
+# ╔═╡ f9295f00-f7f6-44f1-ad1d-3bab3a628c5b
+mode(c4)
+
+# ╔═╡ 754505f8-b080-4c3d-a6b2-79d69e06e771
+e = Erlang()
+
+# ╔═╡ db1654f3-99f4-4aaf-93a6-f54be2506a39
+scale(e)
+
+# ╔═╡ 3d068866-48bd-4f9c-937d-71683bbfc7b8
+rate(e)
+
+# ╔═╡ e9d696ec-5bd5-41a9-b666-4ab504f028e7
+kurtosis(e)
+
+# ╔═╡ e836d5f3-61b3-49d8-9dce-99f455884abc
+var(e)
+
+# ╔═╡ 60095213-fd06-4b3e-a131-38cbe6d74f71
+mgf(e, 1.8) # evaluates moment generating function
+
+# ╔═╡ 597d59f3-03ed-4333-b99e-dcaf536793b3
+cf(e, 8.9) # evaluates characteristic function
+
+# ╔═╡ b4fe0130-9560-4d81-b4e0-1e3dcc3a769e
+e1 = Exponential()
+
+# ╔═╡ e6052dea-e63d-4a4f-987e-a3dffe9d3bc9
+suffstats(Exponential, rand(1000))
+
+# ╔═╡ 4974f123-952c-4626-8346-9c42697590b1
+fit_mle(Exponential, rand(1000))
+
+# ╔═╡ 0f12c5c0-823f-4e14-8256-d524cb258143
+f = FDist(4.5, 7)
+
+# ╔═╡ 084c1f11-6fe7-496b-8603-071d27573e92
+entropy(f)
+
+# ╔═╡ 4f49bdff-5c44-4c2f-b6db-753a24619d76
+rand(f, 50)
+
+# ╔═╡ 997aaa92-0227-47c7-87ea-61c0fa10ccc8
+g = Gamma(4.5, 7)
+
+# ╔═╡ 28339f8a-582a-477c-ae7b-3d3e19cd50b5
+fit_mle(Gamma, rand(1000))
+
+# ╔═╡ d757ff04-4448-4bd7-8d3c-239a5e55179b
+entropy(g)
+
+# ╔═╡ 8f24b9b2-d2b7-4308-9b64-f0c7e274463f
+kurtosis(g)
+
+# ╔═╡ 3db1002f-abc3-4781-9862-2bf82a057b81
+gradlogpdf(g, 0.6)
+
+# ╔═╡ 60859f4c-a549-4851-85c8-cc1eb1a1ea9f
+mgf(g, -.4)
+
+# ╔═╡ 652fcbda-ac03-4a90-958c-a3739b08fab0
+i = InverseGamma()
+
+# ╔═╡ b4f733ed-3069-4f81-89e2-a2c069d6b25b
+params(i)
+
+# ╔═╡ 09a52cce-ca36-4d1c-8fbc-38196bffc09d
+cquantile(i, .75)
+
+# ╔═╡ 28d6e92f-cbb5-40f6-b4f1-81fdec46456d
+invlogccdf(i, -.9)
+
+# ╔═╡ f663e150-2ebe-401c-a0bb-8a910476ee02
+i1 = InverseGaussian()
+
+# ╔═╡ 5df72ac7-1f4d-4cdd-9dea-b2260b5197e0
+fit_mle(InverseGaussian, rand(10000))
+
+# ╔═╡ 0f511fed-05f6-4970-9eba-0bc58182d91f
+logccdf(i1, -.75)
+
+# ╔═╡ 444f1b65-7eab-4550-9b08-3c83a60c7f64
+p = Pareto()
+
+# ╔═╡ 268a0e38-1ec1-4fdc-a947-c65ba851e8eb
+fit_mle(Pareto, rand(10000))
+
+# ╔═╡ 0689dbf0-255e-4c30-a88b-2851914d19f3
+entropy(p)
+
+# ╔═╡ 4fa96ad7-ed04-401b-a7ac-e71c24cb73fc
+pdf(p, 1.75)
+
+# ╔═╡ a0dbf262-25c0-4d23-9b4b-1a17b20539be
+l = LogNormal()
+
+# ╔═╡ 20437f49-3bff-44a4-ba86-b3a30689450c
+logccdf(l, 0.4)
+
+# ╔═╡ b4e49482-aa94-43a8-a472-7230ece557c0
+cquantile(l, 0.75)
+
+# ╔═╡ 488a1cf3-6a06-49c7-93c9-bcf388ea5943
+fit_mle(LogNormal, rand(10000))
+
+# ╔═╡ 76f712db-0a60-4518-a06c-3bee6d2aa08e
+l1 = LogitNormal()
+
+# ╔═╡ 67147ca1-2d89-44a8-9c11-353ee6cb293c
+invlogccdf(l1, 1.4)
+
+# ╔═╡ 3a15c778-3d84-4c65-929a-22f43bca517c
+fit_mle(LogitNormal, rand(1000))
+
+# ╔═╡ 388f32bc-debf-4f54-878e-377a58cd9a66
+l2 = Logistic()
+
+# ╔═╡ b359a15e-440a-4849-935f-2ca7af3c263e
+gradlogpdf(l2, 3.5)
+
+# ╔═╡ aeb2b5ab-3214-44b2-8eee-039ef4e9684d
+skewness(l2)
+
+# ╔═╡ 78a85346-1d4c-4c20-8191-870ca37b04bd
+l3 = Laplace()
+
+# ╔═╡ 7f59cdda-709a-45e5-b6a0-53301066a6b6
+mgf(l3, 7.7)
+
+# ╔═╡ ef057b36-8339-48ff-8440-441b63e51b15
+fit_mle(Laplace, rand(1000))
+
+# ╔═╡ 5f60603b-3d67-4cd2-9f7a-fd4837db6c1d
+r = Rayleigh(2)
+
+# ╔═╡ 77411715-da83-4f24-b915-91a2a76d207c
+logcdf(r, 0.4)
+
+# ╔═╡ 87a363c1-0eb9-4b5a-b888-0054d933de7c
+entropy(r)
+
+# ╔═╡ e20b0e9b-4e81-42a6-9af9-a2dbcf0b052c
+fit_mle(Rayleigh, rand(1000))
+
+# ╔═╡ 6cc6aa0c-fbdd-42a2-afd1-7a21929699e6
+s = SymTriangularDist()
+
+# ╔═╡ 8d65ec5d-758f-4afd-8408-fef03eb3b8c3
+invlogcdf(s, -0.5)
+
+# ╔═╡ 4b926625-2d61-4326-b12c-783803b5ac99
+quantile(s, 0/95)
+
+# ╔═╡ d8d9ed48-bd64-4a0f-9dbd-42b9115d8837
+t = TDist(5)
+
+# ╔═╡ c5b30329-c34b-45c9-92b5-fd03828d2fc1
+dof(t)
+
+# ╔═╡ e92de989-f4c3-4998-9900-61dba2b79a5d
+gradlogpdf(t, 1.7)
+
+# ╔═╡ a66a69ae-a726-4cf6-94bb-bf9b88b18efb
+entropy(t)
+
+# ╔═╡ 23b2af75-73dd-4be0-ad41-760fcc533f50
+t1 = TriangularDist(1, 5, 2)
+
+# ╔═╡ 6fe6eef3-6a85-414e-9947-1a29e235b406
+rand(t1)
+
+# ╔═╡ 8ee67312-0a6a-4fa4-b7c3-519b3f146df1
+logpdf(t1, 0.34)
+
+# ╔═╡ 37e6381a-30a4-481c-8d1c-55ccb87fb353
+mgf(t1, 7.4)
+
+# ╔═╡ 1296320b-d714-4b80-87f8-1cefb1dbf868
+t2 = Triweight()
+
+# ╔═╡ a86924e6-39ed-4f58-b60c-4473f6a9bb8d
+mgf(t2, 4.8)
+
+# ╔═╡ 76151351-4f16-4d58-b2ae-c91dde660477
+cf(t2, 8.98)
+
+# ╔═╡ 8b886e2d-6eb0-43c1-9cbd-822b5e01e8ce
+u = Uniform()
+
+# ╔═╡ 1e3a631b-e4a8-412e-a4e1-3beeace38c62
+location(u)
+
+# ╔═╡ 6d232648-2dd4-402f-8b54-e79c6608afd8
+kurtosis(u)
+
+# ╔═╡ 3b3b6e04-d25c-4aa6-ad68-7466bbb6dbc3
+gradlogpdf(u, 1.5) # for all values
+
+# ╔═╡ 49e3c863-eca3-499e-828a-dca0f4039de4
+v = VonMises()
+
+# ╔═╡ 14ab4e0f-203f-4fab-9036-3696b7ef3ab8
+logpdf(v, 0.9)
+
+# ╔═╡ 866c601b-9e48-4493-ba2e-39df9864141a
+cf(v, -1.6)
+
+# ╔═╡ ff6b783b-a2a1-43fb-b38d-b0fd967841ca
+sampler(v)
+
+# ╔═╡ 245cc832-6d01-4367-ad8b-4f1b55b5390e
+w = Weibull()
+
+# ╔═╡ 820d1231-d71f-45a6-90e0-6d22d15156a5
+partype(w) # shows type of parameters
+
+# ╔═╡ e1f9c16b-bcab-4ef5-b115-77a7a9362470
+cquantile(w, 0.75) # evaluates 75th percentile of the distribution
+
+# ╔═╡ fef0ce0e-44d6-4484-80e1-45bd5c9c7e38
+invlogccdf(w, 0.3)
+
+# ╔═╡ 21578ccb-3943-48fd-b1fd-6237bdf4f80f
+x = Array(rand(rng, 1000))
+
+# ╔═╡ 0a3bb76a-3ef7-41f5-80ca-df935932da77
+fit(Weibull, collect(1:10)) #log will only return a complex result if called with a complex argument, i.e. values less than 0 and the condition α > zero(α) && θ > zero(θ) is satisfied.
+
+# ╔═╡ c17a6aa4-79a7-426c-bdee-96039b800857
+fit_mle(Weibull, x) # computes maximum likelihood estimate
 
 # ╔═╡ b88f392c-8a1a-4acf-b3cd-c31d7a4fd627
 #=
-NOTE: Go through https://turing.ml/dev/tutorials/00-introduction/ to get an easy understanding of Bayesian Inferential learning in Julia using Turing.jl package. We haven't covered this in the book.
+NOTE: Go through https://turing.ml/dev/tutorials/00-introduction/ to get an easy understanding of Bayesian Inferential learning in Julia using Turing.jl package. Go through https://github.com/JuliaNLSolvers/Optim.jl to get a hang of optimization of univariate and multi-variate functions. We haven't covered this in the book.
 =#
 
 # ╔═╡ 00000000-0000-0000-0000-000000000001
@@ -502,11 +770,9 @@ uuid = "3f19e933-33d8-53b3-aaab-bd5110c3b7a0"
 # ╠═5919ad85-4b11-4a0d-95ff-d4aa32b7889f
 # ╠═dcbfd625-a4c9-447f-9215-0eed31f23de6
 # ╠═ed33234c-91cb-4f92-9111-6f25fce99faf
-# ╠═e561d4f9-d855-40a2-89e3-3de6ffcb5c7f
 # ╠═4c8ca066-2963-485d-982f-d338eab90c7b
-# ╠═180e37ba-a2cb-4dbc-9a27-e11e08460670
-# ╠═0e2fda44-f052-4a85-a00d-1f2e64b859ee
-# ╠═bcf9d2f5-7f87-4a54-b23e-5189efac9cbc
+# ╠═3ec79418-2b81-430c-8cae-1abb29247c58
+# ╠═fd37d4e4-e0d7-4711-8d7e-2ff8507dc83b
 # ╠═e1e7a04a-684a-426b-b3bc-4e7767b2494f
 # ╠═60fd87ba-08e2-4897-9cd8-187452151978
 # ╠═f1875391-cc8d-49bb-a903-83a138594dd5
@@ -514,14 +780,105 @@ uuid = "3f19e933-33d8-53b3-aaab-bd5110c3b7a0"
 # ╠═324a3a13-87c5-4dc9-8d35-b5f7fbb93109
 # ╠═8daba87d-59e8-44c6-af7d-6e4b0aca5a75
 # ╠═f74c6cba-99f5-48b1-a6b9-b523ea55930d
-# ╠═1afbf359-d389-4191-ad83-cea349dcb564
-# ╠═cbdfaa67-e11f-4f11-8c68-30015929847a
 # ╠═cd6a616f-9054-46f6-ab58-2023ef2732e2
 # ╠═a1083141-cf94-408d-8181-bfe2e3daf9b3
 # ╠═f7c41616-b468-4496-8f85-527d8b3fcfda
 # ╠═12e16b48-bb71-4944-b915-f00f59633a28
 # ╠═7e2ea0b4-68c3-46b2-bb76-43d2fcc959db
 # ╠═5dc859a8-c12f-44da-8ac8-50896fb7c7e2
+# ╠═708ac013-715b-4df4-8a40-96501e093274
+# ╠═af163e63-604a-4f4c-b57f-b0cc00378324
+# ╠═f9f6e408-30d4-4f7e-b64f-e3a8ff8e92d1
+# ╠═98a4752e-53af-4d29-bdea-d76577fd8a5c
+# ╠═cfdfd9a0-9017-4116-be43-fced34b58606
+# ╠═e289e579-30e8-4292-934c-f7d7f56886e5
+# ╠═c05d0cd1-db06-4818-a05c-6b4d560c7abe
+# ╠═76c4ffc3-2d4f-4f2f-b22d-5a9a2812cbdd
+# ╠═f05b9262-f373-491a-b690-b3e1854bd388
+# ╠═9197be83-f28d-462a-800e-b572b942e87e
+# ╠═83de8601-722d-4ec2-8bcd-8808984b12fd
+# ╠═21474254-5742-4c22-b2ad-575f4ed2f47c
+# ╠═1d56e469-9c7c-48c3-b997-0dbd38234f83
+# ╠═fd09566a-acdf-4999-9a32-fdfd518177e8
+# ╠═ac83ee95-5f7b-4df3-9c12-1e66e472b3d6
+# ╠═b0aabc61-10f1-453c-aefa-c098d614ecd6
+# ╠═f9295f00-f7f6-44f1-ad1d-3bab3a628c5b
+# ╠═754505f8-b080-4c3d-a6b2-79d69e06e771
+# ╠═db1654f3-99f4-4aaf-93a6-f54be2506a39
+# ╠═3d068866-48bd-4f9c-937d-71683bbfc7b8
+# ╠═e9d696ec-5bd5-41a9-b666-4ab504f028e7
+# ╠═e836d5f3-61b3-49d8-9dce-99f455884abc
+# ╠═60095213-fd06-4b3e-a131-38cbe6d74f71
+# ╠═597d59f3-03ed-4333-b99e-dcaf536793b3
+# ╠═b4fe0130-9560-4d81-b4e0-1e3dcc3a769e
+# ╠═e6052dea-e63d-4a4f-987e-a3dffe9d3bc9
+# ╠═4974f123-952c-4626-8346-9c42697590b1
+# ╠═0f12c5c0-823f-4e14-8256-d524cb258143
+# ╠═084c1f11-6fe7-496b-8603-071d27573e92
+# ╠═4f49bdff-5c44-4c2f-b6db-753a24619d76
+# ╠═997aaa92-0227-47c7-87ea-61c0fa10ccc8
+# ╠═28339f8a-582a-477c-ae7b-3d3e19cd50b5
+# ╠═d757ff04-4448-4bd7-8d3c-239a5e55179b
+# ╠═8f24b9b2-d2b7-4308-9b64-f0c7e274463f
+# ╠═3db1002f-abc3-4781-9862-2bf82a057b81
+# ╠═60859f4c-a549-4851-85c8-cc1eb1a1ea9f
+# ╠═652fcbda-ac03-4a90-958c-a3739b08fab0
+# ╠═b4f733ed-3069-4f81-89e2-a2c069d6b25b
+# ╠═09a52cce-ca36-4d1c-8fbc-38196bffc09d
+# ╠═28d6e92f-cbb5-40f6-b4f1-81fdec46456d
+# ╠═f663e150-2ebe-401c-a0bb-8a910476ee02
+# ╠═5df72ac7-1f4d-4cdd-9dea-b2260b5197e0
+# ╠═0f511fed-05f6-4970-9eba-0bc58182d91f
+# ╠═444f1b65-7eab-4550-9b08-3c83a60c7f64
+# ╠═268a0e38-1ec1-4fdc-a947-c65ba851e8eb
+# ╠═0689dbf0-255e-4c30-a88b-2851914d19f3
+# ╠═4fa96ad7-ed04-401b-a7ac-e71c24cb73fc
+# ╠═a0dbf262-25c0-4d23-9b4b-1a17b20539be
+# ╠═20437f49-3bff-44a4-ba86-b3a30689450c
+# ╠═b4e49482-aa94-43a8-a472-7230ece557c0
+# ╠═488a1cf3-6a06-49c7-93c9-bcf388ea5943
+# ╠═76f712db-0a60-4518-a06c-3bee6d2aa08e
+# ╠═67147ca1-2d89-44a8-9c11-353ee6cb293c
+# ╠═3a15c778-3d84-4c65-929a-22f43bca517c
+# ╠═388f32bc-debf-4f54-878e-377a58cd9a66
+# ╠═b359a15e-440a-4849-935f-2ca7af3c263e
+# ╠═aeb2b5ab-3214-44b2-8eee-039ef4e9684d
+# ╠═78a85346-1d4c-4c20-8191-870ca37b04bd
+# ╠═7f59cdda-709a-45e5-b6a0-53301066a6b6
+# ╠═ef057b36-8339-48ff-8440-441b63e51b15
+# ╠═5f60603b-3d67-4cd2-9f7a-fd4837db6c1d
+# ╠═77411715-da83-4f24-b915-91a2a76d207c
+# ╠═87a363c1-0eb9-4b5a-b888-0054d933de7c
+# ╠═e20b0e9b-4e81-42a6-9af9-a2dbcf0b052c
+# ╠═6cc6aa0c-fbdd-42a2-afd1-7a21929699e6
+# ╠═8d65ec5d-758f-4afd-8408-fef03eb3b8c3
+# ╠═4b926625-2d61-4326-b12c-783803b5ac99
+# ╠═d8d9ed48-bd64-4a0f-9dbd-42b9115d8837
+# ╠═c5b30329-c34b-45c9-92b5-fd03828d2fc1
+# ╠═e92de989-f4c3-4998-9900-61dba2b79a5d
+# ╠═a66a69ae-a726-4cf6-94bb-bf9b88b18efb
+# ╠═23b2af75-73dd-4be0-ad41-760fcc533f50
+# ╠═6fe6eef3-6a85-414e-9947-1a29e235b406
+# ╠═8ee67312-0a6a-4fa4-b7c3-519b3f146df1
+# ╠═37e6381a-30a4-481c-8d1c-55ccb87fb353
+# ╠═1296320b-d714-4b80-87f8-1cefb1dbf868
+# ╠═a86924e6-39ed-4f58-b60c-4473f6a9bb8d
+# ╠═76151351-4f16-4d58-b2ae-c91dde660477
+# ╠═8b886e2d-6eb0-43c1-9cbd-822b5e01e8ce
+# ╠═1e3a631b-e4a8-412e-a4e1-3beeace38c62
+# ╠═6d232648-2dd4-402f-8b54-e79c6608afd8
+# ╠═3b3b6e04-d25c-4aa6-ad68-7466bbb6dbc3
+# ╠═49e3c863-eca3-499e-828a-dca0f4039de4
+# ╠═14ab4e0f-203f-4fab-9036-3696b7ef3ab8
+# ╠═866c601b-9e48-4493-ba2e-39df9864141a
+# ╠═ff6b783b-a2a1-43fb-b38d-b0fd967841ca
+# ╠═245cc832-6d01-4367-ad8b-4f1b55b5390e
+# ╠═820d1231-d71f-45a6-90e0-6d22d15156a5
+# ╠═e1f9c16b-bcab-4ef5-b115-77a7a9362470
+# ╠═fef0ce0e-44d6-4484-80e1-45bd5c9c7e38
+# ╠═21578ccb-3943-48fd-b1fd-6237bdf4f80f
+# ╠═0a3bb76a-3ef7-41f5-80ca-df935932da77
+# ╠═c17a6aa4-79a7-426c-bdee-96039b800857
 # ╠═b88f392c-8a1a-4acf-b3cd-c31d7a4fd627
 # ╟─00000000-0000-0000-0000-000000000001
 # ╟─00000000-0000-0000-0000-000000000002
