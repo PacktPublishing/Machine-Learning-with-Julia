@@ -1,5 +1,5 @@
 ### A Pluto.jl notebook ###
-# v0.15.1
+# v0.16.1
 
 using Markdown
 using InteractiveUtils
@@ -29,16 +29,19 @@ using BenchmarkTools
 Random.seed!(1234)
 
 # ╔═╡ a8c0864a-753f-4426-a4cd-b7fa3a025913
-a = AnalyticWeights(rand(3))
+a = AnalyticWeights(rand(7))
 
 # ╔═╡ 268fc9b3-94f4-41b7-b7aa-7e9bd583f330
-f = FrequencyWeights(rand(3))
+f = FrequencyWeights(rand(7))
+
+# ╔═╡ 3b33d21a-6a6b-4f79-affc-3d9f22dc78fe
+u = uweights(7)
 
 # ╔═╡ 3d56cbe2-5992-4394-968e-9bbe060ced17
-w = Weights(rand(3))
+w = Weights(rand(7))
 
 # ╔═╡ 0ecd945d-cdb4-415d-898e-ffa5cbe5b421
-e = eweights(1:10, 0.3)
+e = eweights(1:10, 0.7)
 
 # ╔═╡ ae34080f-c20b-4751-97c2-7d2e69459560
 # Functions defined for Weight vectors
@@ -177,7 +180,7 @@ r = rand(50)
 percentile(r, 7) == quantile(r, 0.07)
 
 # ╔═╡ 824ae35a-3dca-4019-8bb6-105884dd1dcf
-iqr(r) == percentile(r, 75) - percentile(r, 25) # computes interquantile range of collection
+iqr(r) == percentile(r, 75) - percentile(r, 25) # computes interquartile range of collection
 
 # ╔═╡ 3fa5be08-db89-4636-b5e4-ea82ee175fc8
 mode(r)
@@ -293,6 +296,12 @@ denserank([1, 2, 2, 3, 4, 5, 5, 5, 7, 7]) # return "1223" ranking or dense ranki
 # ╔═╡ 3c610beb-98a1-40cb-bce3-44653d15497b
 tiedrank([1, 2, 2, 3, 4, 5, 5, 5, 7, 7]) # return tied or fractional or "1 2.5 2.5 4" ranking of an array
 
+# ╔═╡ f59e0156-65c6-46ce-8a4a-659b15ba983d
+corspearman(rand(10), rand(10))
+
+# ╔═╡ f3b288a6-3d80-42a4-84be-6b47a2ff7790
+corkendall(r, r) # r = rand(50)
+
 # ╔═╡ 929042c8-08f3-4b83-8386-2bf74cf17c57
 # Sampling
 
@@ -300,16 +309,16 @@ tiedrank([1, 2, 2, 3, 4, 5, 5, 5, 7, 7]) # return tied or fractional or "1 2.5 2
 sample(Random.GLOBAL_RNG, rand(50), Weights(rand(50)))
 
 # ╔═╡ 02159230-0fbd-470e-be4b-1e42f7ff8117
-direct_sample!(Random.GLOBAL_RNG, rand(50), rand(50)) # not yet released
+StatsBase.direct_sample!(Random.GLOBAL_RNG, rand(50), Weights(rand(50)))
 
 # ╔═╡ a2762fe5-a185-4d96-a64a-f4e0f7db4fa1
 samplepair(Random.GLOBAL_RNG, 7)
 
 # ╔═╡ 1f0947d3-8b60-4b1b-ba72-0b6b9d59d9b0
-knuths_sample!(Random.GLOBAL_RNG, rand(50), rand(50)) # not yet released
+StatsBase.knuths_sample!(Random.GLOBAL_RNG, rand(50), Weights(rand(50)))
 
 # ╔═╡ 22089e17-fb61-48e1-8bb4-6e8041227490
-alias_sample!(Random.GLOBAL_RNG, rand(50), rand(50)) # not yet released
+StatsBase.alias_sample!(Weights(rand(50)), rand(50))
 
 # ╔═╡ 67fbd540-090e-4d49-9a34-6e40b9676047
 # Empirical Estimation
@@ -1076,9 +1085,9 @@ version = "1.9.3+0"
 
 [[MKL_jll]]
 deps = ["Artifacts", "IntelOpenMP_jll", "JLLWrappers", "LazyArtifacts", "Libdl", "Pkg"]
-git-tree-sha1 = "c253236b0ed414624b083e6b72bfe891fbd2c7af"
+git-tree-sha1 = "5455aef09b40e5020e1520f551fa3135040d4ed0"
 uuid = "856f044c-d86e-5d09-b602-aeab76dc8ba7"
-version = "2021.1.1+1"
+version = "2021.1.1+2"
 
 [[MacroTools]]
 deps = ["Markdown", "Random"]
@@ -1657,6 +1666,7 @@ version = "3.5.0+0"
 # ╠═892d7d9f-3048-48fa-b2c3-2ca11c11b143
 # ╠═a8c0864a-753f-4426-a4cd-b7fa3a025913
 # ╠═268fc9b3-94f4-41b7-b7aa-7e9bd583f330
+# ╠═3b33d21a-6a6b-4f79-affc-3d9f22dc78fe
 # ╠═3d56cbe2-5992-4394-968e-9bbe060ced17
 # ╠═0ecd945d-cdb4-415d-898e-ffa5cbe5b421
 # ╠═ae34080f-c20b-4751-97c2-7d2e69459560
@@ -1743,6 +1753,8 @@ version = "3.5.0+0"
 # ╠═d58bfbb1-e048-4963-b893-e91075bc9b5c
 # ╠═5f88e552-434c-4afa-817b-d983120bb1c0
 # ╠═3c610beb-98a1-40cb-bce3-44653d15497b
+# ╠═f59e0156-65c6-46ce-8a4a-659b15ba983d
+# ╠═f3b288a6-3d80-42a4-84be-6b47a2ff7790
 # ╠═929042c8-08f3-4b83-8386-2bf74cf17c57
 # ╠═6f78cac2-3edc-4939-b0d4-018eb1c93713
 # ╠═02159230-0fbd-470e-be4b-1e42f7ff8117
