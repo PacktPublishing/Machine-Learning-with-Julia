@@ -305,20 +305,49 @@ corkendall(r, r) # r = rand(50)
 # ╔═╡ 929042c8-08f3-4b83-8386-2bf74cf17c57
 # Sampling
 
-# ╔═╡ 6f78cac2-3edc-4939-b0d4-018eb1c93713
+# ╔═╡ fde869d1-9970-4494-9b4c-824e1d174550
+# Non-weighted sampling methods
+
+# ╔═╡ 3e161772-ed3a-42f5-93e3-8b4bd5744acc
+sample(Random.GLOBAL_RNG, rand(50), 7) # sends 7 random numbers from the array
+
+# ╔═╡ 6ef038dd-e7b4-4565-94b6-fd892f8cb6e1
+samplepair(Random.GLOBAL_RNG, 30)
+
+# ╔═╡ 0032e25a-5c88-4a45-954c-c7e9589f55d3
+samplepair(Random.GLOBAL_RNG, 4:34)
+
+# ╔═╡ e1dea148-df04-4947-b386-5df0cdf3f9df
+StatsBase.seqsample_a!(Random.GLOBAL_RNG, 5:15, zeros(Int, 5))
+
+# ╔═╡ 0c09e3d6-7e97-448e-8ddf-305b402b8788
+StatsBase.seqsample_c!(Random.GLOBAL_RNG, 5:15, zeros(Int, 5))
+
+# ╔═╡ 9b282016-e1fd-4ae3-960f-3777186ecb22
+StatsBase.seqsample_d!(Random.GLOBAL_RNG, 5:15, zeros(Int, 5))
+
+# ╔═╡ df3b5061-176b-4608-9e35-04e509055e33
+arr = zeros(Int, 10)
+
+# ╔═╡ 666a21f5-268c-4774-af15-b59d9b914213
+for j = 1:size(arr,5)
+    StatsBase.knuths_sample!(5:15, view(arr,:,j))
+end
+
+# ╔═╡ 9e998755-a076-44c2-a015-42c880517441
+arr
+
+# ╔═╡ a78b0ad6-6fae-406a-987a-669f3cf99831
+# Weighted sampling methods
+
+# ╔═╡ 4bafa21a-bcf7-4c7e-9598-88ee159514bc
 sample(Random.GLOBAL_RNG, rand(50), Weights(rand(50)))
 
 # ╔═╡ 02159230-0fbd-470e-be4b-1e42f7ff8117
 StatsBase.direct_sample!(Random.GLOBAL_RNG, rand(50), Weights(rand(50)))
 
-# ╔═╡ a2762fe5-a185-4d96-a64a-f4e0f7db4fa1
-samplepair(Random.GLOBAL_RNG, 7)
-
-# ╔═╡ 1f0947d3-8b60-4b1b-ba72-0b6b9d59d9b0
-StatsBase.knuths_sample!(Random.GLOBAL_RNG, rand(50), Weights(rand(50)))
-
 # ╔═╡ 22089e17-fb61-48e1-8bb4-6e8041227490
-StatsBase.alias_sample!(Weights(rand(50)), rand(50))
+StatsBase.alias_sample!(rand(50), Weights(rand(50)), rand(50))
 
 # ╔═╡ 67fbd540-090e-4d49-9a34-6e40b9676047
 # Empirical Estimation
@@ -331,6 +360,15 @@ h = fit(Histogram, [7.],  -20:20, closed=:right)
 
 # ╔═╡ b24a29e2-5a1e-4f9e-93e3-a3fee0d9efdb
 normalize(h, mode=:density)
+
+# ╔═╡ e6d2bd43-64be-4256-825f-371979ee1a1e
+norm(h)
+
+# ╔═╡ 190941ef-a12d-46cd-aac5-5690ba165060
+zero(h)
+
+# ╔═╡ f68989b3-9100-4671-b70d-f116c5d7a5e8
+ecdf(rand(50))
 
 # ╔═╡ 7e5f2cae-9ad3-4eb0-84a1-56adf7b2dedf
 # Auto Covariance and Auto Correlation
@@ -1756,15 +1794,27 @@ version = "3.5.0+0"
 # ╠═f59e0156-65c6-46ce-8a4a-659b15ba983d
 # ╠═f3b288a6-3d80-42a4-84be-6b47a2ff7790
 # ╠═929042c8-08f3-4b83-8386-2bf74cf17c57
-# ╠═6f78cac2-3edc-4939-b0d4-018eb1c93713
+# ╠═fde869d1-9970-4494-9b4c-824e1d174550
+# ╠═3e161772-ed3a-42f5-93e3-8b4bd5744acc
+# ╠═6ef038dd-e7b4-4565-94b6-fd892f8cb6e1
+# ╠═0032e25a-5c88-4a45-954c-c7e9589f55d3
+# ╠═e1dea148-df04-4947-b386-5df0cdf3f9df
+# ╠═0c09e3d6-7e97-448e-8ddf-305b402b8788
+# ╠═9b282016-e1fd-4ae3-960f-3777186ecb22
+# ╠═df3b5061-176b-4608-9e35-04e509055e33
+# ╠═666a21f5-268c-4774-af15-b59d9b914213
+# ╠═9e998755-a076-44c2-a015-42c880517441
+# ╠═a78b0ad6-6fae-406a-987a-669f3cf99831
+# ╠═4bafa21a-bcf7-4c7e-9598-88ee159514bc
 # ╠═02159230-0fbd-470e-be4b-1e42f7ff8117
-# ╠═a2762fe5-a185-4d96-a64a-f4e0f7db4fa1
-# ╠═1f0947d3-8b60-4b1b-ba72-0b6b9d59d9b0
 # ╠═22089e17-fb61-48e1-8bb4-6e8041227490
 # ╠═67fbd540-090e-4d49-9a34-6e40b9676047
 # ╠═1d21c5f0-8f8c-42cd-94e9-4d2b26904399
 # ╠═f02a8c8a-06ad-4d96-822d-6309971c1229
 # ╠═b24a29e2-5a1e-4f9e-93e3-a3fee0d9efdb
+# ╠═e6d2bd43-64be-4256-825f-371979ee1a1e
+# ╠═190941ef-a12d-46cd-aac5-5690ba165060
+# ╠═f68989b3-9100-4671-b70d-f116c5d7a5e8
 # ╠═7e5f2cae-9ad3-4eb0-84a1-56adf7b2dedf
 # ╠═d9d86abc-521c-4a3e-b848-9624ef39313d
 # ╠═5d32e2fd-b4a1-4277-bb41-a5117fb81d4a
