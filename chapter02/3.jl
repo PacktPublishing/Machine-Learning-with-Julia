@@ -1,11 +1,14 @@
 ### A Pluto.jl notebook ###
-# v0.15.1
+# v0.16.1
 
 using Markdown
 using InteractiveUtils
 
 # ╔═╡ 6a8d7cf4-08d2-11ec-2bfe-77d314082c71
 using StatsModels
+
+# ╔═╡ b7bc91a0-c24b-4c18-a37d-9d82ea06174b
+using StatsModels: hasresponse, hasintercept, omitsintercept, drop_term
 
 # ╔═╡ 5ecccbc3-37db-4326-b363-c15d2c1c55fb
 using Random
@@ -31,6 +34,33 @@ rng = StableRNG(1)
 # ╔═╡ 57233fca-dd70-4113-88e7-3699f2987a10
 f1 = @formula(y ~ 1 + a + b + c + b&c) # can only allow ints as intercept and also can be of any form such as @formula(y ~ 5 + a - b * c / b|c)
 
+# ╔═╡ 4504aa01-5bee-4d96-afeb-098e6ce706cf
+hasresponse(f1)
+
+# ╔═╡ 7d24f2de-f734-4c7b-bbeb-a39353c639c1
+omitsintercept(f1)
+
+# ╔═╡ d525b311-cae2-4edd-8585-3051de11761f
+f1.rhs == 0 #checks rhs and lhs of the formulae variable
+
+# ╔═╡ 9ebcd948-32c8-499d-bdff-ab15632ec118
+terms(f1)
+
+# ╔═╡ 639a83b6-4b11-44ec-9d39-07de19f59900
+typeof(f1)
+
+# ╔═╡ 7b99d6b6-b046-4b8a-adb6-51365daa3522
+d1 = drop_term(f1, term(:1))
+
+# ╔═╡ 5763afa6-41a8-47dc-b8b0-4a8370bd4340
+hasintercept(d1)
+
+# ╔═╡ 5014e8fd-15a7-4202-a550-95c518dda936
+a, b = term.((:a, :b))
+
+# ╔═╡ 3be813d9-35e1-4111-ab90-f9b075bad927
+@formula(0 ~ a * b).rhs == (a, b, a&b) # This is Star property of Formula Rewrite.
+
 # ╔═╡ 59a1d516-1349-40cf-a63b-ba397c51429c
 df = DataFrame(y = rand(rng, 9), a = 1:9, b = rand(rng, 9), c = repeat(["d","e","f"], 3))
 
@@ -39,6 +69,9 @@ f = apply_schema(f1, schema(f1, df))
 
 # ╔═╡ c774b110-cac9-433b-aca8-6e2ae4de7509
 resp, pred = modelcols(f, df)
+
+# ╔═╡ 41bc742c-8347-4ea8-9d20-73b53c65cec2
+resp
 
 # ╔═╡ 7b823b2d-8152-432b-bed0-8e956b370750
 pred
@@ -605,6 +638,7 @@ uuid = "3f19e933-33d8-53b3-aaab-bd5110c3b7a0"
 
 # ╔═╡ Cell order:
 # ╠═6a8d7cf4-08d2-11ec-2bfe-77d314082c71
+# ╠═b7bc91a0-c24b-4c18-a37d-9d82ea06174b
 # ╠═5ecccbc3-37db-4326-b363-c15d2c1c55fb
 # ╠═45ae7bfb-c4cf-425c-9541-a4410f6bbf02
 # ╠═a68d1c2d-cedd-4fd7-923b-69bf70c91b50
@@ -613,9 +647,19 @@ uuid = "3f19e933-33d8-53b3-aaab-bd5110c3b7a0"
 # ╠═b6c4bdd5-378c-4338-8690-d155abe5eda5
 # ╠═43502b67-c04e-4d4b-91dd-1b9fec574097
 # ╠═57233fca-dd70-4113-88e7-3699f2987a10
+# ╠═4504aa01-5bee-4d96-afeb-098e6ce706cf
+# ╠═7d24f2de-f734-4c7b-bbeb-a39353c639c1
+# ╠═d525b311-cae2-4edd-8585-3051de11761f
+# ╠═9ebcd948-32c8-499d-bdff-ab15632ec118
+# ╠═639a83b6-4b11-44ec-9d39-07de19f59900
+# ╠═7b99d6b6-b046-4b8a-adb6-51365daa3522
+# ╠═5763afa6-41a8-47dc-b8b0-4a8370bd4340
+# ╠═5014e8fd-15a7-4202-a550-95c518dda936
+# ╠═3be813d9-35e1-4111-ab90-f9b075bad927
 # ╠═59a1d516-1349-40cf-a63b-ba397c51429c
 # ╠═a0faf1c1-bbb6-4ddb-ae52-9e618b0541e3
 # ╠═c774b110-cac9-433b-aca8-6e2ae4de7509
+# ╠═41bc742c-8347-4ea8-9d20-73b53c65cec2
 # ╠═7b823b2d-8152-432b-bed0-8e956b370750
 # ╠═de56af73-fb18-4a65-b0bd-10eae75d2861
 # ╠═d4c50010-b5ff-4e2a-8f7e-7e3638a08d7c

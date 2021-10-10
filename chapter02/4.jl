@@ -1,5 +1,5 @@
 ### A Pluto.jl notebook ###
-# v0.15.1
+# v0.16.1
 
 using Markdown
 using InteractiveUtils
@@ -29,10 +29,31 @@ A DataFrame object can be created with several columns, NamedTuple, Dicts, Array
 =#
 
 # ╔═╡ a5853228-b040-46e2-937b-134aa833b199
-DataFrame((a=[7, 7], b=[3, 4]))
+df = DataFrame((a=[7, 7], b=[3, 4]))
+
+# ╔═╡ 2dfeea25-0a7d-477b-8f0b-238cb5ac996f
+length(df[1,:]) # get number of elements in the DataFrameRow
+
+# ╔═╡ d4e72dfe-88cf-455c-8619-fa337d8ad198
+df[1, :]
+
+# ╔═╡ 4276b4fc-83b2-45bb-a114-af205d47041b
+gf = groupby(df, :a)[1]
+
+# ╔═╡ c5337a2c-44ec-4813-8430-b3505b6488e1
+ByRow(+)([1, 2, 3, 4, 5], [2, 4, 5, 6, 7]) # implements the function row-wise
+
+# ╔═╡ e2faa9b1-9ae0-4ef8-a235-5bc67f997f23
+AsTable((Name = "Nabs", Age = 23))
 
 # ╔═╡ 88224c4a-2e92-48be-a329-9a7e5b449d57
 DataFrame([7 1 5; 9 10 11], :auto) # here columns x1, x2, x3, .. are auto generated
+
+# ╔═╡ d461a50d-bab2-4f46-b0d6-56568439b2e9
+eachrow(df)[2]
+
+# ╔═╡ d8e290ee-42ee-42b9-b098-254e72af8638
+eachcol(df)
 
 # ╔═╡ 386f80f7-10d1-4075-897d-af48ff2f5eda
 # There are 3 ways to read CSV files to a DataFrame
@@ -147,6 +168,9 @@ names(gdp, String) # return column names which are of a particular DataType
 # ╔═╡ aa9744b3-7a0f-4d26-8da5-933310ae5d3a
 propertynames(gdp) # here you can get column names as Symbols
 
+# ╔═╡ 9a1a83ed-2801-4f21-8a99-3a4e7ec70a5e
+rename(gdp, :UNITS => :UNITS_STATS)
+
 # ╔═╡ 28ea219e-fbf7-477a-b245-95fc7397b256
 # Basic info about DataFrame
 
@@ -162,8 +186,29 @@ nrow(gdp)
 # ╔═╡ bf4cbe82-43c8-4f5b-bffb-9a0e7ffa8d93
 ncol(gdp)
 
+# ╔═╡ 08fa8033-ab7b-483d-9500-6c32c4f243c3
+ndims(gdp)
+
+# ╔═╡ 98d20964-0a16-43d4-aadc-e56aec601213
+rownumber(gdp[2,:])
+
+# ╔═╡ 75fd60e7-d96d-4edb-9766-ff41ef600805
+parentindices(gdp)
+
+# ╔═╡ f4408b75-8a25-42e7-917b-42f9c0bfff2e
+parent(gdp)
+
 # ╔═╡ 3093d613-5109-4051-b8f6-935b842246a6
 describe(gdp, cols=4:7)
+
+# ╔═╡ 20270e3d-9e84-4ff5-811c-47e80d5459d3
+show(stdout, MIME("text/latex"), gdp) # output is printed in terminal
+
+# ╔═╡ 0b86cc10-63cb-42a2-9812-1384c097ae35
+show(stdout, MIME("text/csv"), gdp) # output is printed in terminal
+
+# ╔═╡ 626c4687-0719-4651-bb3b-1d638d936b7e
+show(stdout, MIME("text/html"), describe(gdp)) # output is printed in terminal
 
 # ╔═╡ 9ee344ee-e3a0-44c0-9627-6855e942c789
 # While using Julia REPL, all the bulk of a dataframe is not shown in the screen. To fit the whole dataframe you can use show(df, allcols=true) or show(df, allrows=true).
@@ -236,6 +281,9 @@ gdp[Not(3), r"6"]
 
 # ╔═╡ 81ecd06e-8c13-4dc0-81c9-ed575b8303bb
 gdp
+
+# ╔═╡ 95cf6d4e-a89b-40c1-a6b0-2f0692c27651
+append!(gdp, gdp)
 
 # ╔═╡ eccb8cec-d709-4682-bc34-2867402a6cfc
 combine(gdp, :Data_value => mean => :mean_data_value) # this aggregates data and makes a copy
@@ -829,7 +877,14 @@ uuid = "3f19e933-33d8-53b3-aaab-bd5110c3b7a0"
 # ╠═22c94091-2278-4f60-a57a-d8b5d419fd37
 # ╠═ceb84193-d5b6-493c-b109-9bb040dba50c
 # ╠═a5853228-b040-46e2-937b-134aa833b199
+# ╠═2dfeea25-0a7d-477b-8f0b-238cb5ac996f
+# ╠═d4e72dfe-88cf-455c-8619-fa337d8ad198
+# ╠═4276b4fc-83b2-45bb-a114-af205d47041b
+# ╠═c5337a2c-44ec-4813-8430-b3505b6488e1
+# ╠═e2faa9b1-9ae0-4ef8-a235-5bc67f997f23
 # ╠═88224c4a-2e92-48be-a329-9a7e5b449d57
+# ╠═d461a50d-bab2-4f46-b0d6-56568439b2e9
+# ╠═d8e290ee-42ee-42b9-b098-254e72af8638
 # ╠═386f80f7-10d1-4075-897d-af48ff2f5eda
 # ╠═46871146-e192-4d1a-944b-eb06fa3d44ec
 # ╠═f24fb0a1-2a39-4a0d-aa7c-f60856307f6d
@@ -864,12 +919,20 @@ uuid = "3f19e933-33d8-53b3-aaab-bd5110c3b7a0"
 # ╠═b3d029a5-4dab-42dd-9735-dd63082fb97f
 # ╠═c1f4417a-5940-48f3-84e5-2b7b6721e031
 # ╠═aa9744b3-7a0f-4d26-8da5-933310ae5d3a
+# ╠═9a1a83ed-2801-4f21-8a99-3a4e7ec70a5e
 # ╠═28ea219e-fbf7-477a-b245-95fc7397b256
 # ╠═528af444-1692-433f-9800-763cb1da56d3
 # ╠═764e6a45-fe29-47a8-914a-21c545887c3c
 # ╠═bb22078d-fe42-4f4c-8b0b-0b4cb1f71469
 # ╠═bf4cbe82-43c8-4f5b-bffb-9a0e7ffa8d93
+# ╠═08fa8033-ab7b-483d-9500-6c32c4f243c3
+# ╠═98d20964-0a16-43d4-aadc-e56aec601213
+# ╠═75fd60e7-d96d-4edb-9766-ff41ef600805
+# ╠═f4408b75-8a25-42e7-917b-42f9c0bfff2e
 # ╠═3093d613-5109-4051-b8f6-935b842246a6
+# ╠═20270e3d-9e84-4ff5-811c-47e80d5459d3
+# ╠═0b86cc10-63cb-42a2-9812-1384c097ae35
+# ╠═626c4687-0719-4651-bb3b-1d638d936b7e
 # ╠═9ee344ee-e3a0-44c0-9627-6855e942c789
 # ╠═34e7c893-902f-4868-8855-ad83b56b4b8c
 # ╠═6c7e3124-ea5f-4e58-820a-abaf55fed480
@@ -893,6 +956,7 @@ uuid = "3f19e933-33d8-53b3-aaab-bd5110c3b7a0"
 # ╠═08c1fbea-ad4f-414d-a942-6445a5fc8f62
 # ╠═6e8eafa8-6854-4b4b-8a02-a82f08314505
 # ╠═81ecd06e-8c13-4dc0-81c9-ed575b8303bb
+# ╠═95cf6d4e-a89b-40c1-a6b0-2f0692c27651
 # ╠═eccb8cec-d709-4682-bc34-2867402a6cfc
 # ╠═86bbd468-ecc4-4026-9dd4-5d8f2b9d50dc
 # ╠═e69776d2-3640-4c9f-aef2-d30a94dee390
