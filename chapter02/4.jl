@@ -55,6 +55,9 @@ eachrow(df)[2]
 # ╔═╡ d8e290ee-42ee-42b9-b098-254e72af8638
 eachcol(df)
 
+# ╔═╡ ff6bad5e-7373-4c2e-a69c-e4dc4ad4b620
+similar(df, 4) # has same number of columns as the parent dataframe but with specified numer of rows
+
 # ╔═╡ 386f80f7-10d1-4075-897d-af48ff2f5eda
 # There are 3 ways to read CSV files to a DataFrame
 
@@ -94,6 +97,21 @@ Other formats from which a Julian DataFrame can be created and written to are:
 
 # ╔═╡ b5352a9f-385f-4e1a-9bd4-c43a95681b9e
 df3 = CSV.read("gdp.csv", DataFrame) # Here DataFrame is passed as an object
+
+# ╔═╡ 68a29a3d-040b-49d9-8453-0ec29b9ea91f
+isapprox.(df2, df3) # this won't work because the columns have String type data
+
+# ╔═╡ 87cb09b7-05d5-4863-8ec0-015ca5755cad
+isapprox.(DataFrame(a=rand(10), b=rand(10)), DataFrame(a=rand(10), b=rand(10))) #broadcasted over all values over columns
+
+# ╔═╡ 50b0a355-ebf8-4a5f-89ce-132724abf382
+isapprox(DataFrame(a=rand(10), b=rand(10)), DataFrame(a=rand(10), b=rand(10)))
+
+# ╔═╡ 90f197cc-4fbd-4dc0-b7d0-1e8d37a592a1
+values(df1)
+
+# ╔═╡ 44ba67f4-b846-4f8f-afd2-40f9bb6ee93c
+pairs(df1[!,:Period])
 
 # ╔═╡ 2a147ec5-302b-4ef7-a25d-50a6a40916a6
 # create DataFrame column by column
@@ -170,6 +188,27 @@ propertynames(gdp) # here you can get column names as Symbols
 
 # ╔═╡ 9a1a83ed-2801-4f21-8a99-3a4e7ec70a5e
 rename(gdp, :UNITS => :UNITS_STATS)
+
+# ╔═╡ 499dc896-5c55-4bee-a9e3-e006c495c67d
+groupiegdp = groupby(gdp, [:Period, :Data_value])
+
+# ╔═╡ 45060fd5-db50-4222-8e0d-3d7bb8be5b08
+get(groupiegdp, (UNITS="Percent",), nothing)
+
+# ╔═╡ ec2e9079-f447-4da5-ac08-b63b7cf4d4a4
+groupcols(groupiegdp)
+
+# ╔═╡ e027e8fd-a918-4a64-a88b-54fc7d5ce4b4
+groupindices(groupiegdp)
+
+# ╔═╡ ffa1c8de-b952-4718-bcc5-5c65fe721dc8
+keys(groupiegdp)
+
+# ╔═╡ 2a5f7dea-5ae4-4da7-906f-0b9810e9cea0
+valuecols(groupiegdp)
+
+# ╔═╡ 311d401a-8778-4362-b2b3-01df66b37142
+parent(groupiegdp)
 
 # ╔═╡ 28ea219e-fbf7-477a-b245-95fc7397b256
 # Basic info about DataFrame
@@ -275,6 +314,27 @@ gdp[:, Cols("Period", Between("Data_value", "MAGNTUDE"))]
 # ╔═╡ 08c1fbea-ad4f-414d-a942-6445a5fc8f62
 # You can use Regex to select columns too. Here, we select columns having number "6" and not the 3rd column.
 gdp[Not(3), r"6"]
+
+# ╔═╡ 2c1e30ce-f3fa-4a67-b4f3-0587f466ec00
+sample = DataFrame(x = [("a", "z"), ("b", "y"), ("c","x")])
+
+# ╔═╡ 12cb9501-d815-45ef-84b2-2886e180a90c
+sample1 = DataFrame(x = [("1", "10"), ("2", "9"), ("3","8")])
+
+# ╔═╡ ecc4cd83-cc73-4358-8df5-25d566b36185
+flatten(sample, :x)
+
+# ╔═╡ cbb9f819-2645-4f7d-9c61-537041bd5466
+hcat(sample, sample1, makeunique=true)
+
+# ╔═╡ 263b9a78-34bb-44a5-bf76-b5d402a4579e
+vcat(sample, sample1)
+
+# ╔═╡ 52cf77af-1fee-4b47-8f02-5c94e060a401
+reduce(vcat, [sample, sample1])
+
+# ╔═╡ 50f35a40-8fee-4a3f-b3a9-b344a8c4253e
+repeat(sample, inner = 3, outer = 5)
 
 # ╔═╡ 6e8eafa8-6854-4b4b-8a02-a82f08314505
 # Transformation functions
@@ -391,6 +451,54 @@ sort!(gdp, [:Data_value, :MAGNTUDE])
 
 # ╔═╡ 38a542dc-eee3-45b5-a52f-e342af3da728
 sort!(gdp, [order(:Period, by=length), order(:Data_value, rev=true)]) # specify ordering for a particular set of columns
+
+# ╔═╡ e2518ebc-0bfe-4ce4-9775-cd2c5abaf201
+issorted(gdp)
+
+# ╔═╡ 49c607c2-c386-4ba9-817b-c80317c0c51f
+sortperm(gdp, [:Data_value, :MAGNTUDE])
+
+# ╔═╡ 3bf66bee-e84b-4293-83f0-b5af13a3f3eb
+
+
+# ╔═╡ c2d3f70e-19ef-4e59-9d22-5728a1e0f0e7
+# Filtering
+
+# ╔═╡ ff666cf9-42dc-4dfc-88bc-6ccd5f1065d5
+delete!(gdp, [5, 7, 9]) # indices must be unique and sorted
+
+# ╔═╡ 222b9658-7aba-426a-a5bd-42dee53f4365
+empty(df) # clear all values from the rows
+
+# ╔═╡ 46253de4-245c-449f-9144-5fbe0fe52af1
+unique(df1)
+
+# ╔═╡ 99a8113d-19c3-484c-a589-d75174b27422
+subset(df, :b => x -> x .> 3)
+
+# ╔═╡ adb5bf96-3f83-41ac-bfb0-2e2e1ee2e8b6
+filter!(row -> row.b > 3, df)
+
+# ╔═╡ 362bf8c3-e5d4-4631-849e-9f1af5264453
+only(df)
+
+# ╔═╡ 79a0555b-3815-4a8a-ad82-297bb0721c34
+nonunique(df1)
+
+# ╔═╡ 4ac3df0d-cf63-4cab-8c7c-6ce37a3589b2
+# Handling missing values
+
+# ╔═╡ 3845701a-4d36-4b40-a5e9-df3b3578c7a5
+allowmissing!(df2) # The DataType has changed for each column.
+
+# ╔═╡ 38f77f4d-da45-4ebf-9916-a3ddb03fb39e
+disallowmissing!(DataFrame(x=Union{Int, Missing}[7, 9, 7, 6, 53, missing, 3, 2, 56, missing]), error=false)
+
+# ╔═╡ 17536f1d-bbb0-46d9-91a6-e094b749ec9e
+dropmissing!(DataFrame(x=Union{Int, Missing}[7, 9, 7, 6, 53, missing, 3, 2, 56, missing]))
+
+# ╔═╡ 9eeb9b8a-c943-421c-a414-7bd7069bbcae
+completecases(DataFrame(x=Union{Int, Missing}[7, 9, 7, 6, 53, missing, 3, 2, 56, missing]))
 
 # ╔═╡ 374a0805-1ed4-4eef-bab7-cc4da4659a72
 # Categorical Data
@@ -885,6 +993,7 @@ uuid = "3f19e933-33d8-53b3-aaab-bd5110c3b7a0"
 # ╠═88224c4a-2e92-48be-a329-9a7e5b449d57
 # ╠═d461a50d-bab2-4f46-b0d6-56568439b2e9
 # ╠═d8e290ee-42ee-42b9-b098-254e72af8638
+# ╠═ff6bad5e-7373-4c2e-a69c-e4dc4ad4b620
 # ╠═386f80f7-10d1-4075-897d-af48ff2f5eda
 # ╠═46871146-e192-4d1a-944b-eb06fa3d44ec
 # ╠═f24fb0a1-2a39-4a0d-aa7c-f60856307f6d
@@ -895,6 +1004,11 @@ uuid = "3f19e933-33d8-53b3-aaab-bd5110c3b7a0"
 # ╠═317347d7-54cd-4a01-bf61-6154e7a9e63e
 # ╠═50e83a4f-68c6-45ff-bc58-fb24a1fdda83
 # ╠═b5352a9f-385f-4e1a-9bd4-c43a95681b9e
+# ╠═68a29a3d-040b-49d9-8453-0ec29b9ea91f
+# ╠═87cb09b7-05d5-4863-8ec0-015ca5755cad
+# ╠═50b0a355-ebf8-4a5f-89ce-132724abf382
+# ╠═90f197cc-4fbd-4dc0-b7d0-1e8d37a592a1
+# ╠═44ba67f4-b846-4f8f-afd2-40f9bb6ee93c
 # ╠═2a147ec5-302b-4ef7-a25d-50a6a40916a6
 # ╠═322d07a8-95dc-490c-be8b-68b2cf332c19
 # ╠═946a5035-4586-442d-be37-b714ef171d99
@@ -920,6 +1034,13 @@ uuid = "3f19e933-33d8-53b3-aaab-bd5110c3b7a0"
 # ╠═c1f4417a-5940-48f3-84e5-2b7b6721e031
 # ╠═aa9744b3-7a0f-4d26-8da5-933310ae5d3a
 # ╠═9a1a83ed-2801-4f21-8a99-3a4e7ec70a5e
+# ╠═499dc896-5c55-4bee-a9e3-e006c495c67d
+# ╠═45060fd5-db50-4222-8e0d-3d7bb8be5b08
+# ╠═ec2e9079-f447-4da5-ac08-b63b7cf4d4a4
+# ╠═e027e8fd-a918-4a64-a88b-54fc7d5ce4b4
+# ╠═ffa1c8de-b952-4718-bcc5-5c65fe721dc8
+# ╠═2a5f7dea-5ae4-4da7-906f-0b9810e9cea0
+# ╠═311d401a-8778-4362-b2b3-01df66b37142
 # ╠═28ea219e-fbf7-477a-b245-95fc7397b256
 # ╠═528af444-1692-433f-9800-763cb1da56d3
 # ╠═764e6a45-fe29-47a8-914a-21c545887c3c
@@ -954,6 +1075,13 @@ uuid = "3f19e933-33d8-53b3-aaab-bd5110c3b7a0"
 # ╠═72dfa3c2-ec92-4c97-98a7-525964218356
 # ╠═6d699f5b-0ac0-40b9-a601-ec0205131cdd
 # ╠═08c1fbea-ad4f-414d-a942-6445a5fc8f62
+# ╠═2c1e30ce-f3fa-4a67-b4f3-0587f466ec00
+# ╠═12cb9501-d815-45ef-84b2-2886e180a90c
+# ╠═ecc4cd83-cc73-4358-8df5-25d566b36185
+# ╠═cbb9f819-2645-4f7d-9c61-537041bd5466
+# ╠═263b9a78-34bb-44a5-bf76-b5d402a4579e
+# ╠═52cf77af-1fee-4b47-8f02-5c94e060a401
+# ╠═50f35a40-8fee-4a3f-b3a9-b344a8c4253e
 # ╠═6e8eafa8-6854-4b4b-8a02-a82f08314505
 # ╠═81ecd06e-8c13-4dc0-81c9-ed575b8303bb
 # ╠═95cf6d4e-a89b-40c1-a6b0-2f0692c27651
@@ -991,6 +1119,22 @@ uuid = "3f19e933-33d8-53b3-aaab-bd5110c3b7a0"
 # ╠═5e351fca-85ea-4e52-b607-e693deac1719
 # ╠═64d4462f-f8fd-4186-9d48-dffd76c12fe6
 # ╠═38a542dc-eee3-45b5-a52f-e342af3da728
+# ╠═e2518ebc-0bfe-4ce4-9775-cd2c5abaf201
+# ╠═49c607c2-c386-4ba9-817b-c80317c0c51f
+# ╠═3bf66bee-e84b-4293-83f0-b5af13a3f3eb
+# ╠═c2d3f70e-19ef-4e59-9d22-5728a1e0f0e7
+# ╠═ff666cf9-42dc-4dfc-88bc-6ccd5f1065d5
+# ╠═222b9658-7aba-426a-a5bd-42dee53f4365
+# ╠═46253de4-245c-449f-9144-5fbe0fe52af1
+# ╠═99a8113d-19c3-484c-a589-d75174b27422
+# ╠═adb5bf96-3f83-41ac-bfb0-2e2e1ee2e8b6
+# ╠═362bf8c3-e5d4-4631-849e-9f1af5264453
+# ╠═79a0555b-3815-4a8a-ad82-297bb0721c34
+# ╠═4ac3df0d-cf63-4cab-8c7c-6ce37a3589b2
+# ╠═3845701a-4d36-4b40-a5e9-df3b3578c7a5
+# ╠═38f77f4d-da45-4ebf-9916-a3ddb03fb39e
+# ╠═17536f1d-bbb0-46d9-91a6-e094b749ec9e
+# ╠═9eeb9b8a-c943-421c-a414-7bd7069bbcae
 # ╠═374a0805-1ed4-4eef-bab7-cc4da4659a72
 # ╠═1dd794a3-61c0-4f27-af0d-89bfdc973bdb
 # ╠═d9a58858-2bb1-44b3-a4c6-30b5d62936c4
