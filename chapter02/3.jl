@@ -37,6 +37,12 @@ f1 = @formula(y ~ 1 + a + b + c + b&c) # can only allow ints as intercept and al
 # ╔═╡ 4504aa01-5bee-4d96-afeb-098e6ce706cf
 hasresponse(f1)
 
+# ╔═╡ 565d4afd-1dbf-4668-bd4d-c2112e74d9b2
+StatsModels.implicit_intercept(f1)
+
+# ╔═╡ 81046045-8818-4dd5-826b-93162cf41010
+StatsModels.drop_intercept(f1)
+
 # ╔═╡ 7d24f2de-f734-4c7b-bbeb-a39353c639c1
 omitsintercept(f1)
 
@@ -109,8 +115,35 @@ X = StatsModels.modelmatrix(@formula(y ~ 1 + a*b).rhs, data)
 # ╔═╡ 219f7dcc-880e-4dd3-b565-515f7ab76570
 data.y = X*(1:8) .+ randn(rng, 100)*0.1 # be careful with the operator sequence
 
-# ╔═╡ a6488e6d-03c5-4353-8a31-d2c1bd461353
-mod = fit(LinearModel, @formula(y ~ 1 + a*b), data)
+# ╔═╡ 200dfb5a-5cf8-4107-bb88-a928c4c50cf7
+mod = fit(LinearModel, @formula(y ~ 1 + a*b * a+b), data)
+
+# ╔═╡ 54f3f851-7858-42c2-b9ed-0cb821983a58
+formula(mod)
+
+# ╔═╡ 0b413bf4-4d4f-4d5a-8b86-eb0411bb8a20
+y = rand(200)
+
+# ╔═╡ 4cda786f-80f1-415d-931f-96399c737dc4
+x1 = rand(200)
+
+# ╔═╡ b932797a-8f5f-437e-8374-a839b31987ea
+x2 = rand(200)
+
+# ╔═╡ 9b6b93d1-43c3-44ea-8c5a-f2b0f48afae6
+ d = DataFrame(x1=x1, x2=x2, y=y)
+
+# ╔═╡ b341db66-b885-4eeb-a43b-5bc9329c1021
+mod1 = fit(LinearModel, @formula(y ~ 1 + x1), d)
+
+# ╔═╡ 9ceea998-0072-4d5a-8eb4-0efa2ddb6b5a
+mod2 = fit(LinearModel, @formula(y ~ 1 + x1 * x2), d)
+
+# ╔═╡ cd39d09b-1851-4d22-91b4-5bc08815ed44
+StatsModels.isnested(mod1, mod2) # not yet defined
+
+# ╔═╡ 8354c1ba-ef08-4932-bf40-846ddfac262e
+StatsModels.lrtest(mod1, mod2)
 
 # ╔═╡ 0c37727f-614d-47dc-b820-68adef96e97a
 #  Julia's @formula is meant to be extendable as feasible through Julian's usual techniques of multiple dispatch. 
@@ -648,6 +681,8 @@ uuid = "3f19e933-33d8-53b3-aaab-bd5110c3b7a0"
 # ╠═43502b67-c04e-4d4b-91dd-1b9fec574097
 # ╠═57233fca-dd70-4113-88e7-3699f2987a10
 # ╠═4504aa01-5bee-4d96-afeb-098e6ce706cf
+# ╠═565d4afd-1dbf-4668-bd4d-c2112e74d9b2
+# ╠═81046045-8818-4dd5-826b-93162cf41010
 # ╠═7d24f2de-f734-4c7b-bbeb-a39353c639c1
 # ╠═d525b311-cae2-4edd-8585-3051de11761f
 # ╠═9ebcd948-32c8-499d-bdff-ab15632ec118
@@ -672,7 +707,16 @@ uuid = "3f19e933-33d8-53b3-aaab-bd5110c3b7a0"
 # ╠═7ccea56a-9287-44d8-97ea-ca3346273f81
 # ╠═4c78b70c-e582-416d-9601-6d30d82d7819
 # ╠═219f7dcc-880e-4dd3-b565-515f7ab76570
-# ╠═a6488e6d-03c5-4353-8a31-d2c1bd461353
+# ╠═200dfb5a-5cf8-4107-bb88-a928c4c50cf7
+# ╠═54f3f851-7858-42c2-b9ed-0cb821983a58
+# ╠═0b413bf4-4d4f-4d5a-8b86-eb0411bb8a20
+# ╠═4cda786f-80f1-415d-931f-96399c737dc4
+# ╠═b932797a-8f5f-437e-8374-a839b31987ea
+# ╠═9b6b93d1-43c3-44ea-8c5a-f2b0f48afae6
+# ╠═b341db66-b885-4eeb-a43b-5bc9329c1021
+# ╠═9ceea998-0072-4d5a-8eb4-0efa2ddb6b5a
+# ╠═cd39d09b-1851-4d22-91b4-5bc08815ed44
+# ╠═8354c1ba-ef08-4932-bf40-846ddfac262e
 # ╠═0c37727f-614d-47dc-b820-68adef96e97a
 # ╠═e9096f5b-147e-4727-89e2-6ec58d6abcd5
 # ╠═40a59d50-4507-4e84-a1d1-9df3feeb9d71
