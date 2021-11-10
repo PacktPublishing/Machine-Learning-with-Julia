@@ -442,6 +442,78 @@ fit_mle(Weibull, x) # computes maximum likelihood estimate
 NOTE: Go through https://turing.ml/dev/tutorials/00-introduction/ to get an easy understanding of Bayesian Inferential learning in Julia using Turing.jl package. Go through https://github.com/JuliaNLSolvers/Optim.jl to get a hang of optimization of univariate and multi-variate functions. We haven't covered this in the book.
 =#
 
+# ╔═╡ b3c270fb-fa77-41d4-8f3c-718f3aac6f77
+# Discrete Univariate Distributions
+
+# ╔═╡ 22f01bfb-5ea9-4f7c-975d-e906b8ae3563
+Bernoulli(0.5) === Bernoulli()
+
+# ╔═╡ ce3cc1f3-6a54-47b2-a409-f71d8dcb7afb
+ber = Bernoulli(0.3)
+
+# ╔═╡ a1a99278-7e8e-4b4e-a795-d00d5e40465e
+succprob(ber) # success probability
+
+# ╔═╡ 99786701-3a49-4433-bb05-ab5e5fa47d1e
+params(ber)
+
+# ╔═╡ ff15af23-cb50-4441-9592-1819421a6205
+skewness(ber)
+
+# ╔═╡ 64b58c58-9ce8-4e42-911d-d4f780d7c1b6
+mode(ber)
+
+# ╔═╡ 40be7660-d642-4c48-9cbe-3396106034cc
+median(ber)
+
+# ╔═╡ 5109a629-ff2a-4bf2-8e86-78f30d05a41d
+logpdf(ber, 1.5)
+
+# ╔═╡ ba7ce037-e348-48bc-8140-238e542b29c4
+ccdf(ber, 0.8)
+
+# ╔═╡ 6b058d97-d87c-442f-b938-163095b271a5
+ccdf(ber, 7)
+
+# ╔═╡ c9a2150d-6a4f-40b3-aaa3-d659b75c57d8
+mgf(ber, 6.8)
+
+# ╔═╡ a15190b3-27ac-48e2-b5bb-d36a802b38d6
+bet = BetaBinomial(6, 0.5, 0.4)
+
+# ╔═╡ 11f55be0-b133-4522-8782-0a3e1f3fde0b
+params(bet)
+
+# ╔═╡ 4199ca17-5342-46cf-80db-fd512413f2cd
+ntrials(bet)
+
+# ╔═╡ 0d6ea1fa-1741-4400-84bd-1e364c260741
+kurtosis(bet)
+
+# ╔═╡ 86b136ca-d77f-4fdf-a0c6-0d6f26d559d9
+mean(bet)
+
+# ╔═╡ 1a0b6cb1-c981-4e4b-b94f-b96bc7843e71
+cdf(bet, 0.6)
+
+# ╔═╡ 6200b397-026f-4484-9680-025bff7e73e1
+quantile(bet, 0.6)
+
+# ╔═╡ 5308d425-1862-42c6-a305-4026876576ac
+bin = Binomial()
+
+# ╔═╡ 11b450ad-d234-4964-a953-c184d9a12098
+ntrials(bin)
+
+# ╔═╡ 1bd7bb23-cae3-4314-896e-72eb0b40c514
+params(bin)
+
+# ╔═╡ 47d3d946-3d6a-475d-b9dc-1e89e47de8c0
+failprob(bin)
+
+# ╔═╡ c25e89a0-be69-4613-be6b-aabdec176dec
+
+
 # ╔═╡ 00000000-0000-0000-0000-000000000001
 PLUTO_PROJECT_TOML_CONTENTS = """
 [deps]
@@ -880,5 +952,29 @@ uuid = "3f19e933-33d8-53b3-aaab-bd5110c3b7a0"
 # ╠═0a3bb76a-3ef7-41f5-80ca-df935932da77
 # ╠═c17a6aa4-79a7-426c-bdee-96039b800857
 # ╠═b88f392c-8a1a-4acf-b3cd-c31d7a4fd627
+# ╠═b3c270fb-fa77-41d4-8f3c-718f3aac6f77
+# ╠═22f01bfb-5ea9-4f7c-975d-e906b8ae3563
+# ╠═ce3cc1f3-6a54-47b2-a409-f71d8dcb7afb
+# ╠═a1a99278-7e8e-4b4e-a795-d00d5e40465e
+# ╠═99786701-3a49-4433-bb05-ab5e5fa47d1e
+# ╠═ff15af23-cb50-4441-9592-1819421a6205
+# ╠═64b58c58-9ce8-4e42-911d-d4f780d7c1b6
+# ╠═40be7660-d642-4c48-9cbe-3396106034cc
+# ╠═5109a629-ff2a-4bf2-8e86-78f30d05a41d
+# ╠═ba7ce037-e348-48bc-8140-238e542b29c4
+# ╠═6b058d97-d87c-442f-b938-163095b271a5
+# ╠═c9a2150d-6a4f-40b3-aaa3-d659b75c57d8
+# ╠═a15190b3-27ac-48e2-b5bb-d36a802b38d6
+# ╠═11f55be0-b133-4522-8782-0a3e1f3fde0b
+# ╠═4199ca17-5342-46cf-80db-fd512413f2cd
+# ╠═0d6ea1fa-1741-4400-84bd-1e364c260741
+# ╠═86b136ca-d77f-4fdf-a0c6-0d6f26d559d9
+# ╠═1a0b6cb1-c981-4e4b-b94f-b96bc7843e71
+# ╠═6200b397-026f-4484-9680-025bff7e73e1
+# ╠═5308d425-1862-42c6-a305-4026876576ac
+# ╠═11b450ad-d234-4964-a953-c184d9a12098
+# ╠═1bd7bb23-cae3-4314-896e-72eb0b40c514
+# ╠═47d3d946-3d6a-475d-b9dc-1e89e47de8c0
+# ╠═c25e89a0-be69-4613-be6b-aabdec176dec
 # ╟─00000000-0000-0000-0000-000000000001
 # ╟─00000000-0000-0000-0000-000000000002
