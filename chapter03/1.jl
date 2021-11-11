@@ -512,7 +512,244 @@ params(bin)
 failprob(bin)
 
 # ╔═╡ c25e89a0-be69-4613-be6b-aabdec176dec
+var(bin)
 
+# ╔═╡ 72e46d50-99a9-4c97-90cf-ea4e682a21ae
+median(bin)
+
+# ╔═╡ 573fafea-56ed-48e8-88ec-df36f244c8f5
+kurtosis(bin)
+
+# ╔═╡ 639e791f-01e6-4481-8df9-0a1fa2482d1b
+cat = Categorical(7)
+
+# ╔═╡ 6a67111e-9224-4459-b89b-f374a08d0be6
+params(cat)
+
+# ╔═╡ 21072c0c-e840-47a4-ba7a-a783aa7a089c
+probs(cat) # probability vector
+
+# ╔═╡ 1f409f70-fee6-414b-8c58-cd71d2a8b5a3
+ncategories(cat)
+
+# ╔═╡ f25fccd1-7478-4b92-bf82-b7f3a84dd930
+ccdf(cat, rand(1000))
+
+# ╔═╡ 38ee2580-a7a8-4dd4-b3ca-281d97a65edc
+ccdf(cat, [2, 5, 3, 6])
+
+# ╔═╡ 250622de-03a0-4675-a91f-9cdb059fcca7
+cdf(cat, rand(1000))
+
+# ╔═╡ 554abb12-c1e6-4c90-aeaf-f4c8d97379a3
+cdf(cat, [2, 5, 3, 6])
+
+# ╔═╡ 6a742c0c-a6f4-45b8-b5a0-f8c9f842773b
+dir = Dirac(7.8)
+
+# ╔═╡ 7b99a92b-699e-42d3-9e0b-60cdefc9ef0f
+insupport(dir, rand(100))
+
+# ╔═╡ ab0549c7-21a3-4028-8db2-2718d25ef5a6
+entropy(dir)
+
+# ╔═╡ 8d0c5648-4ba5-42ae-ab36-25eb69b88649
+var(dir)
+
+# ╔═╡ 3b6865f9-f8ab-4f77-ad81-b654ef3de5ae
+logcdf(dir, rand(100))
+
+# ╔═╡ e9b8f83b-beae-476b-a9be-9a6c56632f06
+dis = DiscreteUniform(47, 69)
+
+# ╔═╡ cd5cc619-d400-4266-9094-a0a83f58fbf0
+probval(dis)
+
+# ╔═╡ 7c6489db-35ec-40de-b0e0-ccf93f0a90ee
+span(dis)
+
+# ╔═╡ e425cdba-1cc9-4073-8bd1-e009bf32bb04
+params(dis)
+
+# ╔═╡ 6619fb02-1afe-4350-b8cf-2ca595c3e6a0
+show(dis)
+
+# ╔═╡ 1125bd37-fb19-45df-860d-f86fbc08d823
+mean(dis)
+
+# ╔═╡ b1bdffc4-8f7c-4714-a7be-145ecf4ad3b8
+skewness(dis)
+
+# ╔═╡ 0dfe1b52-04cf-4dd9-885d-74c8e0cac799
+entropy(dis)
+
+# ╔═╡ 992a775a-d4ab-4d73-a499-459d9fa3e776
+pdf(dis)
+
+# ╔═╡ 1b235fca-23ec-46b3-ba93-33508582bef0
+cdf(dis, 7)
+
+# ╔═╡ 9fb079ba-8eea-4fca-a170-e648717af5f4
+dnp = DiscreteNonParametric([2.3, 4.5, 6.5, 7.8, 9.2], [0.4, 0.3, 0.2, 0.1, 0.0])
+
+# ╔═╡ f4b48aef-a841-4acc-a3a1-c419a135d647
+params(dnp)
+
+# ╔═╡ 364db8a0-bd2d-49a5-bffc-de56814e5888
+support(dnp)
+
+# ╔═╡ d1918575-46e4-4876-a94c-3e232b48b4f2
+probs(dnp)
+
+# ╔═╡ d997cfbb-a5dd-4728-b0a7-9a6f2ddce42f
+pdf(dnp, rand(100))
+
+# ╔═╡ 57424fc3-2161-4772-baec-a23e82e749c4
+ccdf(dnp, rand(100))
+
+# ╔═╡ efa82d81-4fdd-455d-acc0-9a2147a5de1b
+maximum(dnp)
+
+# ╔═╡ 0f6d5f54-ba8f-4ff0-ae11-a4703bc3a5ab
+minimum(dnp)
+
+# ╔═╡ 0dfc6f69-a1c7-432e-8d35-65e0b9df8d73
+entropy(dnp)
+
+# ╔═╡ a9488b85-218e-45ea-896d-d849f485e958
+kurtosis(dnp)
+
+# ╔═╡ da9be907-3b32-4bea-8c8b-94ababcd2dc5
+geo = Geometric(0.8)
+
+# ╔═╡ 13187e58-9a5e-4313-84c3-18936f0a0aef
+failprob(geo)
+
+# ╔═╡ a5d36503-0a65-4e5a-b6b2-230f459d838d
+params(geo)
+
+# ╔═╡ f25d30ae-f2ce-461d-8e2b-cba82f61c031
+var(geo)
+
+# ╔═╡ be18640e-1d7b-4c50-b3df-bfc6ebf36089
+kurtosis(geo)
+
+# ╔═╡ 7f2bd8ab-fd0d-4764-9d71-a39b495ef1e3
+entropy(geo)
+
+# ╔═╡ 55d074c4-2128-4984-bb04-260e617066d4
+logccdf(geo, 7)
+
+# ╔═╡ 276e5bb4-ae8f-4666-9abd-59a601fe96a8
+invlogcdf(geo, -2.8)
+
+# ╔═╡ 8c1c9824-9bba-4104-92f6-35f0482299f4
+cquantile(geo, 2.8)
+
+# ╔═╡ 2e5292ee-c313-41af-8ffe-766d82769ece
+hy = Hypergeometric(9, 5, 7)
+
+# ╔═╡ eac6459d-88a1-4c92-98a1-171667fb62bc
+params(hy)
+
+# ╔═╡ 388dd1f4-39fd-4d8f-a473-e37abce5e6a1
+mean(hy)
+
+# ╔═╡ 0250c6a0-1890-4011-b1e3-fbc43516b0d3
+var(hy)
+
+# ╔═╡ 965d15a2-6027-4277-9793-767301770469
+mode(hy)
+
+# ╔═╡ 666b607b-19af-44bf-9e30-52f9c0ab248b
+kurtosis(hy)
+
+# ╔═╡ 47c63f92-f0ed-494c-9e9a-14e7cc4c6e44
+entropy(hy)
+
+# ╔═╡ 6d5db40b-23ad-44db-8442-2a0f8ab6002c
+neg = NegativeBinomial()
+
+# ╔═╡ 6555ad08-6d83-4745-93d1-d016dd40e9d7
+params(neg)
+
+# ╔═╡ e227dd5b-facf-47f4-a697-bc27bed725a9
+var(neg)
+
+# ╔═╡ bc9a8b94-d96d-42d1-986b-af74d9d66c84
+skewness(neg)
+
+# ╔═╡ 87c51191-400c-4a05-b8ea-bb9fa5292d9e
+logccdf(neg, 0.4)
+
+# ╔═╡ 61842353-23ee-454b-9aae-7c5451d094b4
+quantile(neg, 0.59)
+
+# ╔═╡ a1c4bbc4-45af-4cd8-b02c-d59b94ea1cb2
+po = Poisson()
+
+# ╔═╡ a447413e-939b-4c47-84d9-00a8f0bdb197
+params(po)
+
+# ╔═╡ 74febb89-8545-4759-b4e6-95410b1a7117
+rate(po)
+
+# ╔═╡ cd1f29ed-c476-4603-b9d3-fe700cc070b0
+skewness(po)
+
+# ╔═╡ dd4fdb1b-85bf-4326-a99b-7fa4a3ac3cbe
+pb = PoissonBinomial([0.5, 0.6, 0.8, 0.6, 0.3])
+
+# ╔═╡ 3e3ad40f-4a65-469e-af7e-0410a4918d21
+ntrials(pb)
+
+# ╔═╡ 182464ed-24ef-4abf-b98a-8b0655788b06
+params(pb)
+
+# ╔═╡ b69e36a6-62b1-4dfd-8594-bbd942e64f96
+mean(pb)
+
+# ╔═╡ de4b900b-01b4-44cb-b1e8-16c580de2b74
+kurtosis(pb)
+
+# ╔═╡ 7451dbee-0353-467b-ad97-666c1c520819
+entropy(pb)
+
+# ╔═╡ 9adfcb62-50bf-4d78-8119-746c1580a92d
+modes(pb)
+
+# ╔═╡ c2f1ed3b-9b65-44db-b8ba-1cdeabb14955
+quantile(pb, 0.67)
+
+# ╔═╡ bd569a04-5aea-4081-9b0a-45690daba964
+cdf(pb, rand(100))
+
+# ╔═╡ cfb63469-12f1-47ae-82a0-660be26051d8
+sk = Skellam(7.7)
+
+# ╔═╡ c423d947-1795-4ea3-9c23-9d5558cb581f
+params(sk)
+
+# ╔═╡ 7708ce82-755d-4618-9469-f27918656474
+skewness(sk)
+
+# ╔═╡ e06e7bb2-d372-404b-897e-6bf447eab874
+mean(sk)
+
+# ╔═╡ bb7fc26f-7e86-4c45-ac77-4b16b04e266d
+kurtosis(sk)
+
+# ╔═╡ fabc0cb0-d06f-4071-8041-b225ab028984
+logpdf(sk, rand(100))
+
+# ╔═╡ e3fd3e8e-37b6-4a79-8a77-a5bece3f6af7
+cdf(sk, 7)
+
+# ╔═╡ 99aea4e7-2063-4986-ae99-83a369cf32f6
+# Truncated Distributions
+
+# ╔═╡ 2fcc54ae-5ff8-4652-8935-b7cf7baa1e97
+tbin = truncated(bin, 8, 9)
 
 # ╔═╡ 00000000-0000-0000-0000-000000000001
 PLUTO_PROJECT_TOML_CONTENTS = """
@@ -976,5 +1213,84 @@ uuid = "3f19e933-33d8-53b3-aaab-bd5110c3b7a0"
 # ╠═1bd7bb23-cae3-4314-896e-72eb0b40c514
 # ╠═47d3d946-3d6a-475d-b9dc-1e89e47de8c0
 # ╠═c25e89a0-be69-4613-be6b-aabdec176dec
+# ╠═72e46d50-99a9-4c97-90cf-ea4e682a21ae
+# ╠═573fafea-56ed-48e8-88ec-df36f244c8f5
+# ╠═639e791f-01e6-4481-8df9-0a1fa2482d1b
+# ╠═6a67111e-9224-4459-b89b-f374a08d0be6
+# ╠═21072c0c-e840-47a4-ba7a-a783aa7a089c
+# ╠═1f409f70-fee6-414b-8c58-cd71d2a8b5a3
+# ╠═f25fccd1-7478-4b92-bf82-b7f3a84dd930
+# ╠═38ee2580-a7a8-4dd4-b3ca-281d97a65edc
+# ╠═250622de-03a0-4675-a91f-9cdb059fcca7
+# ╠═554abb12-c1e6-4c90-aeaf-f4c8d97379a3
+# ╠═6a742c0c-a6f4-45b8-b5a0-f8c9f842773b
+# ╠═7b99a92b-699e-42d3-9e0b-60cdefc9ef0f
+# ╠═ab0549c7-21a3-4028-8db2-2718d25ef5a6
+# ╠═8d0c5648-4ba5-42ae-ab36-25eb69b88649
+# ╠═3b6865f9-f8ab-4f77-ad81-b654ef3de5ae
+# ╠═e9b8f83b-beae-476b-a9be-9a6c56632f06
+# ╠═cd5cc619-d400-4266-9094-a0a83f58fbf0
+# ╠═7c6489db-35ec-40de-b0e0-ccf93f0a90ee
+# ╠═e425cdba-1cc9-4073-8bd1-e009bf32bb04
+# ╠═6619fb02-1afe-4350-b8cf-2ca595c3e6a0
+# ╠═1125bd37-fb19-45df-860d-f86fbc08d823
+# ╠═b1bdffc4-8f7c-4714-a7be-145ecf4ad3b8
+# ╠═0dfe1b52-04cf-4dd9-885d-74c8e0cac799
+# ╠═992a775a-d4ab-4d73-a499-459d9fa3e776
+# ╠═1b235fca-23ec-46b3-ba93-33508582bef0
+# ╠═9fb079ba-8eea-4fca-a170-e648717af5f4
+# ╠═f4b48aef-a841-4acc-a3a1-c419a135d647
+# ╠═364db8a0-bd2d-49a5-bffc-de56814e5888
+# ╠═d1918575-46e4-4876-a94c-3e232b48b4f2
+# ╠═d997cfbb-a5dd-4728-b0a7-9a6f2ddce42f
+# ╠═57424fc3-2161-4772-baec-a23e82e749c4
+# ╠═efa82d81-4fdd-455d-acc0-9a2147a5de1b
+# ╠═0f6d5f54-ba8f-4ff0-ae11-a4703bc3a5ab
+# ╠═0dfc6f69-a1c7-432e-8d35-65e0b9df8d73
+# ╠═a9488b85-218e-45ea-896d-d849f485e958
+# ╠═da9be907-3b32-4bea-8c8b-94ababcd2dc5
+# ╠═13187e58-9a5e-4313-84c3-18936f0a0aef
+# ╠═a5d36503-0a65-4e5a-b6b2-230f459d838d
+# ╠═f25d30ae-f2ce-461d-8e2b-cba82f61c031
+# ╠═be18640e-1d7b-4c50-b3df-bfc6ebf36089
+# ╠═7f2bd8ab-fd0d-4764-9d71-a39b495ef1e3
+# ╠═55d074c4-2128-4984-bb04-260e617066d4
+# ╠═276e5bb4-ae8f-4666-9abd-59a601fe96a8
+# ╠═8c1c9824-9bba-4104-92f6-35f0482299f4
+# ╠═2e5292ee-c313-41af-8ffe-766d82769ece
+# ╠═eac6459d-88a1-4c92-98a1-171667fb62bc
+# ╠═388dd1f4-39fd-4d8f-a473-e37abce5e6a1
+# ╠═0250c6a0-1890-4011-b1e3-fbc43516b0d3
+# ╠═965d15a2-6027-4277-9793-767301770469
+# ╠═666b607b-19af-44bf-9e30-52f9c0ab248b
+# ╠═47c63f92-f0ed-494c-9e9a-14e7cc4c6e44
+# ╠═6d5db40b-23ad-44db-8442-2a0f8ab6002c
+# ╠═6555ad08-6d83-4745-93d1-d016dd40e9d7
+# ╠═e227dd5b-facf-47f4-a697-bc27bed725a9
+# ╠═bc9a8b94-d96d-42d1-986b-af74d9d66c84
+# ╠═87c51191-400c-4a05-b8ea-bb9fa5292d9e
+# ╠═61842353-23ee-454b-9aae-7c5451d094b4
+# ╠═a1c4bbc4-45af-4cd8-b02c-d59b94ea1cb2
+# ╠═a447413e-939b-4c47-84d9-00a8f0bdb197
+# ╠═74febb89-8545-4759-b4e6-95410b1a7117
+# ╠═cd1f29ed-c476-4603-b9d3-fe700cc070b0
+# ╠═dd4fdb1b-85bf-4326-a99b-7fa4a3ac3cbe
+# ╠═3e3ad40f-4a65-469e-af7e-0410a4918d21
+# ╠═182464ed-24ef-4abf-b98a-8b0655788b06
+# ╠═b69e36a6-62b1-4dfd-8594-bbd942e64f96
+# ╠═de4b900b-01b4-44cb-b1e8-16c580de2b74
+# ╠═7451dbee-0353-467b-ad97-666c1c520819
+# ╠═9adfcb62-50bf-4d78-8119-746c1580a92d
+# ╠═c2f1ed3b-9b65-44db-b8ba-1cdeabb14955
+# ╠═bd569a04-5aea-4081-9b0a-45690daba964
+# ╠═cfb63469-12f1-47ae-82a0-660be26051d8
+# ╠═c423d947-1795-4ea3-9c23-9d5558cb581f
+# ╠═7708ce82-755d-4618-9469-f27918656474
+# ╠═e06e7bb2-d372-404b-897e-6bf447eab874
+# ╠═bb7fc26f-7e86-4c45-ac77-4b16b04e266d
+# ╠═fabc0cb0-d06f-4071-8041-b225ab028984
+# ╠═e3fd3e8e-37b6-4a79-8a77-a5bece3f6af7
+# ╠═99aea4e7-2063-4986-ae99-83a369cf32f6
+# ╠═2fcc54ae-5ff8-4652-8935-b7cf7baa1e97
 # ╟─00000000-0000-0000-0000-000000000001
 # ╟─00000000-0000-0000-0000-000000000002
